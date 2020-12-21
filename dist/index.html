@@ -3,9 +3,57 @@
   <head>
     <meta charset="utf-8" />
     <title>Todo List</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,700;1,700&family=Montserrat&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/ec1005871d.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+    <div id="content">
+      <div id="project-panel">
+        <div id="project-header">
+          <h1>Projects</h1>
+          <div>
+            <button class="add-item"><h2> <i class="fas fa-plus"></i> New Project</h2></button>
+          </div>
+          <hr>
+        </div>
+        <div id="project-grouping">
+          <h2>All</h2>
+          <h2>Odin Project</h2>
+          <h2>Christmas Shopping</h2>
+          <h2>Fitness</h2>
+        </div>
+      </div>
+
+      <div id="main-panel">
+        <div id="main-panel-header">
+          <div>
+            <h1>All Tasks</h1>
+            <i class="fas fa-ellipsis-v"></i>
+          </div>
+          
+          <div>
+            <h2>Lorem Ipsum is simply dummy text of the printing and typesetting industry.  </h2>
+          </div>
+          <hr>
+        </div>
+        <div id="main-content-controls">
+          <h3>Sort by : <button><h2>Due Date</h2></button> | <button><h2>Priority</h2></button></h3>
+          <button class="add-item"><h2> <i class="fas fa-plus"></i> New Task</h2></button>
+        </div>
+
+        <div id="task-grouping">
+          <div class="task">
+            <h2>hello</h2>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </body>
 
    <script src="main.js"></script>
   </body>

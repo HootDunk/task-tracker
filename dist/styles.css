@@ -1,0 +1,146 @@
+#content, body, html {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  color: hsla(0,0%,100%,.9);
+
+}
+
+::-webkit-scrollbar {
+  width: 0px;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+#content {
+  display: flex;
+}
+
+#project-panel {
+  height: 100%;
+  width: 22vw;
+  background-color: #373c3f;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 70px 40px;
+  box-sizing: border-box;
+
+}
+
+#main-panel {
+  height: 100%;
+  width: 78vw;
+  background-color: #2f3437;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 50px 40px;
+  box-sizing: border-box;
+}
+
+#main-panel::-webkit-scrollbar {
+  display: none;
+}
+
+#project-panel::-webkit-scrollbar {
+  display: none;
+}
+
+#project-header {
+  font-family: 'Lato', sans-serif;
+  
+}
+
+#project-header div{
+  display: flex;
+  justify-content: flex-end;
+}
+
+#project-header h1 {
+  margin-bottom: 0;
+}
+
+
+button {
+  box-sizing: border-box;
+  height: 60px;
+  font-family: 'Lato', sans-serif;
+  font-style: italic;
+  background: none;
+  margin: 0;
+  padding: 0px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color:  hsla(0,0%,100%,.9);
+}
+
+.fas.fa-plus {
+  border-radius: 50%;
+  -webkit-transition: -webkit-transform .8s ease-in-out;
+          transition:         transform .8s ease-in-out;
+}
+
+
+
+#project-grouping h2{
+  font-family: 'Lato', sans-serif;
+  margin-block-end: 0.4em;
+  margin-block-start: 0.4em;
+  padding: .3em;
+  cursor: pointer;
+}
+
+#project-grouping h2:hover {
+  background: #444a4d;
+}
+
+
+
+#main-panel-header h1{
+  font-family: 'Lato', sans-serif;
+  margin-bottom: 0;
+}
+
+#main-panel-header h2{
+  box-sizing: border-box;
+  height: 60px;
+  margin-left: 10px;
+  padding: 0;
+  margin-bottom: 0;
+  font-family: 'Lato', sans-serif;
+  font-style: italic;
+  overflow: auto;
+}
+
+#main-panel-header div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fas.fa-ellipsis-v {
+  text-align: center;
+  font-size:x-large;
+  cursor: pointer;
+  width: 40px;
+}
+
+#main-content-controls {
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  justify-content:space-around;
+}
+
+#main-content-controls h3 {
+  margin-top: 0;
+}
+
+
+.add-item:hover i{
+  -webkit-transform: rotate(360deg);
+  transform: rotate(360deg);
+  transition: all 0.3s ease-in-out 0s;
+}
+
