@@ -38,3 +38,9 @@ const firstTodo = newTodo("first todo", "testing the todo factory", "low", "12/2
 test.todoList.push(firstTodo)
 console.log("all projects: ", allProjects)
 // localStorage.setItem("user", JSON.stringify(allProjects));
+
+
+// Need to figure out the expanded view with javascript.
+// try and do so efficiently so you aren't looping through the entire task collection.
+// first element child could be useful here, check it out!
+// need to consider the eventlistener of the extended task view as well
