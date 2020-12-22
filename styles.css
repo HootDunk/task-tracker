@@ -105,7 +105,7 @@ button {
 }
 
 #main-panel-header h2{
-  box-sizing: border-box;
+  color:  hsla(0,0%,100%,.8);
   height: 60px;
   margin-left: 10px;
   padding: 0;
@@ -150,13 +150,13 @@ button {
 }
 
 .task-full {
-  height: 120px;
+
   border-style: solid;
   border-top: none;
-
   border-color: hsla(0,0%,100%,.6);;
   border-radius: 10px;
   border-width: 1px;
+  margin-bottom: 25px;
 }
 
 .task {
@@ -194,10 +194,25 @@ h2.date {
 }
 
 input[type="checkbox"] {
-
   align-self: center;
   width: 20px;
   height: 20px;
   margin-right: 10px;
+}
+
+.description-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.description-top h3 {
+  margin: 5px 5px 5px 5px;
+  font-family: 'Lato', sans-serif;
+}
+
+.task-full p {
+  color: hsla(0,0%,100%,.7);
+  font-family: 'Montserrat', sans-serif;
+  margin: 5px 10px 5px 10px;
 }
 
