@@ -32,8 +32,9 @@ allProjects.push(test)
 
 
 
+
 const firstTodo = newTodo("first todo", "testing the todo factory", "low", "12/20/20")
 
 test.todoList.push(firstTodo)
-
-localStorage.setItem("user", JSON.stringify(allProjects));
+console.log("all projects: ", allProjects)
+// localStorage.setItem("user", JSON.stringify(allProjects));

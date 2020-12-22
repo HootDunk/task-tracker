@@ -1,3 +1,4 @@
+
 #content, body, html {
   width: 100vw;
   height: 100vh;
@@ -135,12 +136,68 @@ button {
 
 #main-content-controls h3 {
   margin-top: 0;
+  margin-bottom: 0;
 }
-
 
 .add-item:hover i{
   -webkit-transform: rotate(360deg);
   transform: rotate(360deg);
   transition: all 0.3s ease-in-out 0s;
+}
+
+#task-grouping {
+  margin: 0px 20px 0px 20px;
+}
+
+.task-full {
+  height: 120px;
+  border-style: solid;
+  border-top: none;
+
+  border-color: hsla(0,0%,100%,.6);;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+.task {
+  font-family: 'Montserrat', sans-serif;
+  border-style: solid;
+  border-color:  hsla(0,0%,100%,.6);
+  border-radius: 10px;
+  border-width: 1px;
+  background-clip: padding-box;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  height: 70px; 
+}
+
+.task:hover {
+  cursor: pointer;
+}
+
+h2.title {
+  min-width: 40%;
+}
+
+h2.date {
+  min-width: 20%;
+}
+
+#priority-style {
+  /* float: left; */
+  width: 30px;
+  height: 100%;
+  margin-left: 30px;
+  transform: skew(-30deg);
+  background-color: orange;
+}
+
+input[type="checkbox"] {
+
+  align-self: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
