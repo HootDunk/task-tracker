@@ -32,7 +32,6 @@ allProjects.push(test)
 
 
 
-
 const firstTodo = newTodo("first todo", "testing the todo factory", "low", "12/20/20")
 
 test.todoList.push(firstTodo)
@@ -44,3 +43,15 @@ console.log("all projects: ", allProjects)
 // try and do so efficiently so you aren't looping through the entire task collection.
 // first element child could be useful here, check it out!
 // need to consider the eventlistener of the extended task view as well
+
+// Dropdown functionality for todo items
+const taskSummary = Array.from(document.getElementsByClassName('accordian'));
+taskSummary.forEach(task => {
+  console.log(task.nextElementSibling)
+  task.addEventListener("click", (e) => {
+    if (e.target.className != "todo-completed"){
+      task.nextElementSibling.classList.toggle("inactive");
+    }
+  })
+})
+
