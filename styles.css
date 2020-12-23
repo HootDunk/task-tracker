@@ -68,13 +68,15 @@ button {
   height: 60px;
   font-family: 'Lato', sans-serif;
   font-style: italic;
+
   background: none;
   margin: 0;
   padding: 0px;
   border: none;
   outline: none;
   cursor: pointer;
-  color:  hsla(0,0%,100%,.9);
+  color:  rgba(255, 255, 255, 0.664);
+  /* color:  rgb(92, 216, 103); */
 }
 
 .fas.fa-plus {
@@ -187,13 +189,13 @@ h2.date {
   height: 100%;
   margin-left: 30px;
   transform: skew(-30deg);
-  background-color: orange;
+  background-color: #D98121;
 }
 
 input[type="checkbox"] {
   align-self: center;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   margin-right: 10px;
 }
 
@@ -218,3 +220,175 @@ input[type="checkbox"] {
 .inactive {
   display: none;
 }
+
+
+
+.modal {
+  /* This way it could be display flex or grid or whatever also. */
+  box-sizing: border-box;
+  display: block;
+  
+  /* Probably need media queries here */
+  width: 600px;
+  max-width: 100%;
+  
+  height: 400px;
+  max-height: 100%;
+  
+  position: fixed;
+  
+  z-index: 100;
+  
+  left: 60%;
+  top: 50%;
+  
+  /* Use this for centering if unknown width/height */
+  transform: translate(-50%, -50%);
+  
+  /* If known, negative margins are probably better (less chance of blurry text). */
+  /* margin: -200px 0 0 -200px; */
+  
+  background: #2f3437;
+  box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
+}
+.closed {
+  display: none;
+}
+
+.modal button {
+  height: 40px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-guts {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 20px 20px 10px 20px;
+}
+
+.modal-guts h1 {
+  margin-top: 0;
+}
+
+
+
+
+.modal .close-button {
+  position: absolute;
+  
+  /* don't need to go crazy with z-index here, just sits over .modal-guts */
+  z-index: 1;
+  
+  top: 10px;
+  
+  /* needs to look OK with or without scrollbar */
+  right: 20px;
+
+  border: 0;
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  font-size: 1.3rem;
+}
+
+#edit-task {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 17px;
+}
+
+
+#edit-task input[type="radio"]{
+  margin: 10px 10px 10px 10px;
+  width: 30px;
+  height: 30px;
+}
+
+#edit-task textarea {
+  width: 80%;
+  height: 70px;
+}
+
+#edit-task button {
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  font-size: 1.3rem;
+
+}
+/* #edit-task label {
+  margin-top: 15px;
+} */
+
+
+
+.radio-toolbar input[type="radio"] {
+  display: none;
+}
+
+.radio-toolbar label {
+  color: black;
+  display: inline-block;
+  padding: 5px 10px;
+  min-width: 50px;
+  text-align: center;
+  
+}
+
+.radio-toolbar label[for="radio1"] {
+  background-color: #F5D346;
+  cursor: pointer;
+}
+.radio-toolbar label[for="radio2"] {
+  cursor: pointer;
+  background-color: #D98121;
+}
+.radio-toolbar label[for="radio3"] {
+  cursor: pointer;
+  background-color: #D3151C;
+}
+
+.radio-toolbar input[type="radio"]:checked+label {
+  text-decoration: underline;
+}
+
+.radio-toolbar h3 {
+  text-align: center;
+  margin-bottom: 7px;
+}
+
+.form-row.bottom {
+  margin-bottom: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
