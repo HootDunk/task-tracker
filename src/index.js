@@ -2,56 +2,86 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Test whether local storage has been populated
 if(localStorage.length){
-  console.log("we have stuff")
+
   console.log(JSON.parse(localStorage.getItem('user')));
 }
 
 let allProjects = [];
 
-const newProject = (name, description) => {
+const project = (name, description) => {
   const id = uuidv4();
   let active = false;
   const todoList = [];
 
-  // const getTodoList = () => todoList;
-  // const addTodo = (newItem) => todoList.push(newItem);
-  return {id, name, description, active, todoList};
+  const getTodoList = () => {return todoList};
+  const addTodo = (newItem) => todoList.push(newItem);
+  const toggleActive = () => active = !active;
+
+  return {id, name, description, active, toggleActive};
 }
 
-const newTodo = (title, description, priority, dueDate) => {
+const todo = (title, description, priority, dueDate) => {
   const id = uuidv4();
   let completed = false;
   // will likely need to handle the date string either here or in the controller
   return {title, description, priority, dueDate, completed, id}
 }
 
+const newProject = project("test", "testing some more");
+console.log(newProject)
+newProject.active = true;
+console.log(newProject)
 
-const test = newProject("test project", "testing the project factory");
-
-allProjects.push(test)
 
 
 
-const firstTodo = newTodo("first todo", "testing the todo factory", "low", "12/20/20")
 
-test.todoList.push(firstTodo)
-console.log("all projects: ", allProjects)
 // localStorage.setItem("user", JSON.stringify(allProjects));
 
 
-// Need to figure out the expanded view with javascript.
-// try and do so efficiently so you aren't looping through the entire task collection.
-// first element child could be useful here, check it out!
-// need to consider the eventlistener of the extended task view as well
 
-// Dropdown functionality for todo items
+
+// Use actual functions for event listener rather than nameless ones or whatever they're called
+
+// Dropdown functionality for todo items (Show detailed view on click)
 const taskSummary = Array.from(document.getElementsByClassName('accordian'));
 taskSummary.forEach(task => {
-  console.log(task.nextElementSibling)
   task.addEventListener("click", (e) => {
     if (e.target.className != "todo-completed"){
       task.nextElementSibling.classList.toggle("inactive");
     }
   })
 })
+
+
+// Edit task details event
+const taskEditBtns = Array.from(document.getElementsByClassName("task-edit"));
+taskEditBtns.forEach((task) => {
+  task.addEventListener("click", (e) => {
+    console.log(task.parentElement.parentElement)
+    console.log(task.parentElement.parentElement.previousElementSibling)
+    modal.classList.toggle("closed");
+    modalOverlay.classList.toggle("closed")
+  })
+})
+// Toggle Completed Status with checkbox
+const todoCheckBoxes = Array.from(document.getElementsByClassName("todo-completed"));
+todoCheckBoxes.forEach((checkbox) => {
+  checkbox.addEventListener("click", () => {
+    console.log("toggle completed")
+  })
+})
+
+
+
+
+var modal = document.querySelector("#modal");
+var modalOverlay = document.querySelector("#modal-overlay");
+var closeButton = document.querySelector("#close-button");
+
+
+closeButton.addEventListener("click", function() {
+  modal.classList.toggle("closed");
+  modalOverlay.classList.toggle("closed");
+});
 
