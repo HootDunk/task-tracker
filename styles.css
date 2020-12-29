@@ -381,10 +381,17 @@ input[type="checkbox"] {
 
 
 
+/* For new project and edit project form */
+#project-title {
+  width: 80%;
+  height: 25px;
+  font-size: 15px;
+  font-weight: bold;
+}
 
-
-
-
+#project-description {
+  font-size: 15px;
+}
 
 
 
