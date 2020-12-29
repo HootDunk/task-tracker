@@ -53,8 +53,7 @@ Todo.prototype.toggleComplete = function() {
 
 export {
   Todo,
-  Project
-
+  Project,
 }
 
 
@@ -80,3 +79,15 @@ export {
   call render todos which displays all active project's todos.
   event listener for 'All' will need speacial considerations
 */
+
+// Navigating across projects
+/*
+  The currently displayed projects id is set to the data-id of the new task button.
+  Clicking a new project sets its id to the data-id of the new task button.
+*/
+
+
+// figure out the rendering individual tasks from a project
+// first figure out task rendering
+// then call task rendering from the proper event.
+// re-initialize all dynamic events or create a method for it and call it
