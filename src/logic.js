@@ -1,6 +1,64 @@
 import { v4 as uuidv4 } from 'uuid';
 
 
+
+const getProjects = () => {
+  if (localStorage.length){
+    return JSON.parse(localStorage.getItem('user'))
+  }
+  else {
+    return []
+  }
+}
+
+const allProjects = getProjects();
+
+// module function to house all array methods for the projects array
+const projectsArray = (() => {
+
+  const addNewProject = (name, description, projArr) => {
+    const project = new Project(name, description);
+    projArr.push(project)
+  }
+
+  const addNewTask = (title, description, priority, dueDate, projArr) => {
+    const task = new Todo(title, description, priority, dueDate);
+
+    // iterate through array, find the active project object
+    projArr.forEach(proj => {
+      if(proj.active == true){
+        proj.addTodo(task);
+
+      }
+    })
+    
+  }
+
+
+
+  // sets project to active
+  const setToActive = (id, projArr) => {
+    projArr.forEach(proj => proj.id == id ? proj.active = true : proj.active = false);
+  }
+
+  const getActiveProj = (projArr) => {
+    return projArr.find(proj => proj.active == true);
+  }
+
+
+  return {
+    addNewProject,
+    setToActive,
+    getActiveProj,
+    addNewTask,
+  }
+})();
+
+const addNewProject = (name, description, projArr) => {
+  const project = new Project(name, description);
+  projArr.push(project)
+}
+
 function Project(name, description) {
   this.id = uuidv4();
   this.name = name;
@@ -17,9 +75,9 @@ Project.prototype.toggleActive = function(){
   this.active = !this.active;
 }
 
-Project.prototype.getTodoList = function() {
-  return this.todoList;
-}
+// Project.prototype.getTodoList = function() {
+//   return this.todoList;
+// }
 
 // This deletes it from the list, what about deleting the todo object?
 Project.prototype.deleteTodoItem = function(id) {
@@ -51,10 +109,26 @@ Todo.prototype.toggleComplete = function() {
 }
 
 
+const deleteProject = (id, allProjects) => {
+  const index = allProjects.findIndex(project => project.id == id);
+  allProjects.splice(index, 1);
+}
+
+
+
+
+
+
 export {
   Todo,
   Project,
+  deleteProject,
+  projectsArray,
+  allProjects
 }
+
+
+
 
 
 //Brainstorm UI actions and how they relate to the data

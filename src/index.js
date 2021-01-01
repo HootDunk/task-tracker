@@ -1,63 +1,51 @@
+// In the end this should only import events and the events should connect the logic and render functions
 import { staticEvents, dynamicEvents } from "./events";
-import { Todo, Project } from "./logic";
-import { renderProjects, renderTasks, tasks}  from "./render";
+import { Todo, Project, deleteProject, allProjects } from "./logic";
+import { projectsPane, renderTasks, tasks}  from "./render";
 
 
 
 staticEvents.modalClose();
 staticEvents.newProject();
 staticEvents.newTask();
-staticEvents.allProjects();
+staticEvents.editProject();
+
+// where to put allProjects array and how to update it?
 
 
 
-
-
-
-// Test whether local storage has been populated
+// this only tests to see if there is a value in local storage.  doesn't ensure that the value you access is
 if(localStorage.length){
-  const allProjects = JSON.parse(localStorage.getItem('user'))
+  
+  console.log(allProjects)
+  // deleteProject("58c192f9-5be0-4fb1-8b36-d6e0054d04dc", allProjects)
+  // localStorage.setItem("user", JSON.stringify(allProjects));
 
-  console.log(allProjects);
+  staticEvents.allBtn(allProjects);
+  
   // allProjects.forEach(project => console.log(project))
   allProjects.sort((a, b) => a.name.localeCompare(b.name));
 
 
-  renderProjects(allProjects);
+  projectsPane.renderProjects(allProjects);
   dynamicEvents.projectNames();
 
   tasks.clear();
-  tasks.render(allProjects[0].todoList)
-  
+  tasks.renderAll(allProjects);
+
   dynamicEvents.editTaskBtns();
   dynamicEvents.expandedTodo();
   dynamicEvents.todoCheckBoxes();
   
-
 }
 else {
+  // create a sample project and call startup functions
   console.log("no data found")
 }
 
 
 
 
-
-
-
-// // create new project
-// let project = new Project("Testing...", "A test of the object contstructor");
-
-// // create todo items
-// let todo = new Todo("First Todo Item", "reviewing past concepts to help find the best data structure and relationship", "medium", "12/24/20");
-// let todo1 = new Todo("Second Todo item", "general description here", "medium", "12/24/20");
-// let todo2 = new Todo("Third Todo", "idkdidkidkik", "medium", "12/24/20");
-
-// project.addTodo(todo);
-// project.addTodo(todo1);
-// project.addTodo(todo2);
-
-// allProjects.push(project);
 
 
 

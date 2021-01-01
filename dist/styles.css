@@ -304,7 +304,7 @@ input[type="checkbox"] {
   font-size: 1.3rem;
 }
 
-#task-form {
+#modal-form {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: 900;
@@ -317,18 +317,18 @@ input[type="checkbox"] {
 }
 
 
-#task-form input[type="radio"]{
+#modal-form input[type="radio"]{
   margin: 10px 10px 10px 10px;
   width: 30px;
   height: 30px;
 }
 
-#task-form textarea {
+#modal-form textarea {
   width: 80%;
   height: 70px;
 }
 
-#task-form button {
+#modal-form button {
   background: black;
   color: white;
   padding: 5px 10px;

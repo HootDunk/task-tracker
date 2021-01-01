@@ -15,7 +15,7 @@ const createTaskMarkup = () => {
   */
   const html = `
   <h1>${modalTitle}</h1>
-    <form id="task-form">
+    <form id="modal-form">
       <div class="form-row">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" value="${todoTitle}">
@@ -53,12 +53,12 @@ const createTaskMarkup = () => {
 
 const createModalHTML = () => {
   const modalContent = document.querySelector(".modal-guts")
-  console.log(modalContent)
+  // console.log(modalContent)
   const modalTitle = "Edit Task"
   const todoTitle = "";
   modalContent.innerHTML = `
   <h1>${modalTitle}</h1>
-  <form id="task-form">
+  <form id="modal-form">
     <div class="form-row">
       <label for="title">Title:</label>
       <input type="text" id="title" name="title" value="${todoTitle}">
@@ -92,33 +92,33 @@ const createModalHTML = () => {
   `;
 }
 
-const newProjectHTML = () => {
-  modalContent.innerHTML = `
-    <h1>New Project</h1>
-    <form id="task-form">
+// const newProjectHTML = () => {
+//   modalContent.innerHTML = `
+//     <h1>New Project</h1>
+//     <form id="task-form">
 
-      <div class="form-row">
-        <label for="project-title">Title:</label>
-      </div>
+//       <div class="form-row">
+//         <label for="project-title">Title:</label>
+//       </div>
 
-      <div class="form-row">
-        <input type="text" id="project-title" name="project-title" value="">
-      </div>
+//       <div class="form-row">
+//         <input type="text" id="project-title" name="project-title" value="">
+//       </div>
 
 
-        <div class="form-row">
-          <label for="project-description">Description</label>
-        </div>
-        <div class="form-row">
-          <textarea id="project-description" name="project-description"></textarea>
-        </div>
-        <div class="form-row bottom">
-          <button type="button">Delete</button>
-          <button type="submit">Submit</button>
-        </div>
-    </form>
-  `
-}
+//         <div class="form-row">
+//           <label for="project-description">Description</label>
+//         </div>
+//         <div class="form-row">
+//           <textarea id="project-description" name="project-description"></textarea>
+//         </div>
+//         <div class="form-row bottom">
+//           <button type="button">Delete</button>
+//           <button type="submit">Submit</button>
+//         </div>
+//     </form>
+//   `
+// }
 
 
 const renderModal = (() => {
@@ -132,18 +132,18 @@ const renderModal = (() => {
     modal.classList.toggle("closed");
     modalOverlay.classList.toggle("closed");
   }
-
+  // re-use newProjectHTML and make it work as an edit form and a new project form
   const newProjectHTML = () => {
     modalContent.innerHTML = `
       <h1>New Project</h1>
-      <form id="task-form">
+      <form id="modal-form">
   
         <div class="form-row">
           <label for="project-title">Title:</label>
         </div>
   
         <div class="form-row">
-          <input type="text" id="project-title" name="project-title" value="">
+          <input type="text" id="project-title" name="project-title" required />
         </div>
   
   
@@ -151,13 +151,14 @@ const renderModal = (() => {
             <label for="project-description">Description</label>
           </div>
           <div class="form-row">
-            <textarea id="project-description" name="project-description"></textarea>
+            <textarea id="project-description" name="project-description" required></textarea>
           </div>
           <div class="form-row bottom">
             <button type="button">Delete</button>
             <button type="submit">Submit</button>
           </div>
       </form>
+
     `
   }
 
@@ -168,17 +169,44 @@ const renderModal = (() => {
 })();
 
 
-const renderProjects = (projectArr) => {
+
+
+const projectsPane = (() => {
   const projectContent = document.getElementById('dynamic-projects');
-  projectArr.forEach(project => {
-    projectContent.innerHTML += `<h2 data-id='${project.id}' class="project-name">${project.name}</h2>`
-  })
-}
+  const renderProjects = (projectArr) => {
+    projectArr.forEach(project => {
+      projectContent.innerHTML += `<h2 data-id='${project.id}' class="project project-name">${project.name}</h2>`
+    })
+  }
+  const clearProjects = () => {
+    projectContent.innerHTML = "";
+  }
+
+  const setBackground = (id) => {
+    const projects = Array.from(document.getElementsByClassName("project"));
+    projects.forEach(project => {
+      if(project.getAttribute('data-id') == id){
+        project.style.backgroundColor = "#444a4d";
+      }
+      else {
+        project.style.backgroundColor = "transparent";
+      }
+    })
+    console.log(projects)
+    
+  }
+
+  return {
+    renderProjects,
+    clearProjects,
+    setBackground,
+  }
+
+})();
 
 
 
 const tasks = (() => {
-
   const taskContent = document.getElementById("task-grouping");
 
   const clear = () => {
@@ -187,11 +215,11 @@ const tasks = (() => {
 
   const taskHTML = (taskObj) => {
     const HTML = `
-    <div class="task-item">
+    <div data-id="${taskObj.id}" class="task-item">
       <div class="task accordian">
   
-        <div id="priority-style"></div>
-        <input type="checkbox" class="todo-completed">
+        <div style="background-color:${taskObj.priority}"id="priority-style"></div>
+        <input type="checkbox" class="todo-completed" ${taskObj.complete == true ? "checked" : ""}>
         <h2 class="title">${taskObj.title}</h2>
         <h2 class="date">In X days</h2>
   
@@ -202,7 +230,7 @@ const tasks = (() => {
           <h3>10/20/20</h3>
           <i class="fas fa-ellipsis-v task-edit"></i>
         </div>
-        <p>Bacon ipsum dolor amet ham short loin alcatra corned beef shank pig. Doner fatback corned beef brisket short ribs, bacon spare ribs short loin cow. Ball tip kevin alcatra rump brisket. Bacon meatloaf meatball ball tip burgdoggen sirloin.</p>
+        <p>${taskObj.description}</p>
       </div>
     </div>
     `
@@ -211,17 +239,37 @@ const tasks = (() => {
   
   
   const render = (taskArr) => {
-    taskArr.forEach(task => {
-      taskContent.innerHTML += taskHTML(task);
+    if(taskArr.length){
+      taskArr.forEach(task => {
+        taskContent.innerHTML += taskHTML(task);
+      })
+    }
+    else console.log('no tasks yet')
+
+  }
+
+  const renderAll = (allProjects) => {
+    allProjects.forEach(project => {
+      tasks.render(project.todoList)
     })
   }
 
   return {
     clear,
     render,
+    renderAll,
   }
 })();
 
+
+const showHeaderInfo = (proj) => {
+  const projectH1 = document.getElementById("active-title");
+  const projectH2 = document.getElementById("active-description");
+  
+  projectH1.innerHTML = proj.name;
+  projectH2.innerHTML = proj.description;
+
+}
 
 
 
@@ -229,8 +277,9 @@ const tasks = (() => {
 export {
   createModalHTML,
   renderModal,
-  renderProjects,
-  tasks
+  projectsPane,
+  tasks,
+  showHeaderInfo,
 }
 
 // consider making a module function for all the modal rendering as they will share variables
