@@ -92,6 +92,8 @@ const createModalHTML = () => {
   `;
 }
 
+
+
 // const newProjectHTML = () => {
 //   modalContent.innerHTML = `
 //     <h1>New Project</h1>
@@ -120,7 +122,7 @@ const createModalHTML = () => {
 //   `
 // }
 
-
+// Module housing functions that display information within the modal
 const renderModal = (() => {
 
   const modalContent = document.querySelector(".modal-guts");
@@ -162,9 +164,89 @@ const renderModal = (() => {
     `
   }
 
+  // this.id = uuidv4();
+  // this.title = title;
+  // this.description = description;
+  // this.priority = priority;
+  // this.complete = false;
+  // this.dueDate = dueDate; // may need to create the date here from the date string
+
+//   <div class="radio-toolbar">
+//   <input type="radio" id="radio1" name="radios" value="#F5D346" ${taskObj.priority == "#F5D346"? "checked" : ""}>
+//   <label for="radio1">Low</label>
+//   <input type="radio" id="radio1\2" name="radios" value="#F5D346" ${taskObj.priority == "#D98121"? "checked" : ""}>
+//   <label for="radio2">Medium</label>
+//   <input type="radio" id="radio3" name="radios" value="#D3151C" ${taskObj.priority == "#D98121"? "checked" : ""}>
+//   <label for="radio3">High</label>
+// </div>
+
+  // creates HTML for creating new tasks and editing old tasks
+  // must include identifiers to support events for editing and deleting data
+  const taskHTML = (taskObj) => {
+    // const title = '<input type="text" id="title" name="title">';
+    // const title1 = `<input type="text" id="title" name="title" value="${taskObj.title}">`;
+
+    let title = (taskObj)? `<input type="text" id="title" name="title" value="${taskObj.title}">` : `<input type="text" id="title" name="title">`;
+    let dueDate = (taskObj)? `<input type="date" id="date" name="date" value="${taskObj.dueDate}">` : '<input type="date" id="date" name="date">';
+    let priority = (taskObj)? `
+    <div class="radio-toolbar">
+      <input type="radio" id="radio1" name="radios" value="#F5D346" checked>
+      <label for="radio1">Low</label>
+      <input type="radio" id="radio2" name="radios" value="#D98121">
+      <label for="radio2">Medium</label>
+      <input type="radio" id="radio3" name="radios" value="#D3151C">
+      <label for="radio3">High</label>
+    </div>
+    `
+    :
+    `
+    <div class="radio-toolbar">
+      <input type="radio" id="radio1" name="radios" value="#F5D346" checked>
+      <label for="radio1">Low</label>
+      <input type="radio" id="radio2" name="radios" value="#D98121">
+      <label for="radio2">Medium</label>
+      <input type="radio" id="radio3" name="radios" value="#D3151C">
+      <label for="radio3">High</label>
+    </div>
+    `;
+    let description = (taskObj)? 
+    `<textarea id="description" name="description">${taskObj.description}</textarea>`
+    :
+    `<textarea id="description" name="description"></textarea>`
+
+    modalContent.innerHTML = `
+    <h1>${taskObj? "Edit Task" : "New Task"}</h1>
+    <form id="modal-form">
+      <div class="form-row">
+        <label for="title">Title:</label>
+        ${title}
+        <label for="due-date">Due Date:</label>
+        ${dueDate}
+      </div>
+      <div class="form-row">
+        <label>Difficulty</label>
+      </div>
+      <div class="form-row">
+      ${priority}
+      </div>
+        <div class="form-row">
+          <label for="description">Description</label>
+        </div>
+        <div class="form-row">
+          ${description}
+        </div>
+        <div class="form-row bottom">
+          <button type="button">Delete</button>
+          <button type="submit">Submit</button>
+        </div>
+    </form>
+    `;
+  }
+
   return {
     newProjectHTML,
     toggle,
+    taskHTML,
   }
 })();
 
@@ -192,7 +274,6 @@ const projectsPane = (() => {
         project.style.backgroundColor = "transparent";
       }
     })
-    console.log(projects)
     
   }
 
@@ -205,7 +286,7 @@ const projectsPane = (() => {
 })();
 
 
-
+// Module function for rendering tasks in the main content area 
 const tasks = (() => {
   const taskContent = document.getElementById("task-grouping");
 
@@ -228,7 +309,7 @@ const tasks = (() => {
         <div class="description-top">
           <h3>Description:</h3>
           <h3>10/20/20</h3>
-          <i class="fas fa-ellipsis-v task-edit"></i>
+          <i data-id="${taskObj.id}" class="fas fa-ellipsis-v task-edit"></i>
         </div>
         <p>${taskObj.description}</p>
       </div>

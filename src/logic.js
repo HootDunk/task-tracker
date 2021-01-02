@@ -2,63 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-const getProjects = () => {
-  if (localStorage.length){
-    return JSON.parse(localStorage.getItem('user'))
-  }
-  else {
-    return []
-  }
-}
-
-const allProjects = getProjects();
-
-// module function to house all array methods for the projects array
-const projectsArray = (() => {
-
-  const addNewProject = (name, description, projArr) => {
-    const project = new Project(name, description);
-    projArr.push(project)
-  }
-
-  const addNewTask = (title, description, priority, dueDate, projArr) => {
-    const task = new Todo(title, description, priority, dueDate);
-
-    // iterate through array, find the active project object
-    projArr.forEach(proj => {
-      if(proj.active == true){
-        proj.addTodo(task);
-
-      }
-    })
-    
-  }
-
-
-
-  // sets project to active
-  const setToActive = (id, projArr) => {
-    projArr.forEach(proj => proj.id == id ? proj.active = true : proj.active = false);
-  }
-
-  const getActiveProj = (projArr) => {
-    return projArr.find(proj => proj.active == true);
-  }
-
-
-  return {
-    addNewProject,
-    setToActive,
-    getActiveProj,
-    addNewTask,
-  }
-})();
-
-const addNewProject = (name, description, projArr) => {
-  const project = new Project(name, description);
-  projArr.push(project)
-}
-
 function Project(name, description) {
   this.id = uuidv4();
   this.name = name;
@@ -74,10 +17,6 @@ Project.prototype.addTodo = function(todo) {
 Project.prototype.toggleActive = function(){
   this.active = !this.active;
 }
-
-// Project.prototype.getTodoList = function() {
-//   return this.todoList;
-// }
 
 // This deletes it from the list, what about deleting the todo object?
 Project.prototype.deleteTodoItem = function(id) {
@@ -100,13 +39,104 @@ function Todo(title, description, priority, dueDate) {
   this.dueDate = dueDate; // may need to create the date here from the date string
 }
 
-Todo.prototype.sayID = function() {
-  console.log(this.id)
+// Todo.prototype.sayID = function() {
+//   console.log(this.id)
+// }
+
+// Todo.prototype.toggleComplete = function() {
+//   this.complete = !this.complete;
+// }
+
+
+
+// retrieves projects from local storage
+  // first parses the JSON string into an array of objects
+  // then it recreates the objects with object.assign (this re-attaches the prototypes which are lost when saved to local storage)
+const getProjects = () => {
+  if (localStorage.length){
+    const assignedObjArr = [];
+    const simpleObjArr = JSON.parse(localStorage.getItem('user'))
+    simpleObjArr.forEach(item => {
+      const copy = Object.assign(new Project, item)
+      assignedObjArr.push(copy)
+    })
+    return assignedObjArr;
+  }
+  else {
+    return []
+  }
 }
 
-Todo.prototype.toggleComplete = function() {
-  this.complete = !this.complete;
-}
+const allProjects = getProjects();
+
+// module function to house all array methods for the projects array
+const projectsArray = (() => {
+
+  const addNewProject = (name, description, projArr) => {
+    const project = new Project(name, description);
+    projArr.push(project)
+  }
+
+  const addNewTask = (title, description, priority, dueDate, projArr) => {
+    const task = new Todo(title, description, priority, dueDate);
+    // iterate through array, find the active project object
+    projArr.forEach((proj) => {
+      if(proj.active == true){
+        proj.addTodo(task);
+
+      }
+    })
+  }
+
+  // sets project to active
+  const setToActive = (id, projArr) => {
+    projArr.forEach(proj => proj.id == id ? proj.active = true : proj.active = false);
+  }
+
+  const getActiveProj = (projArr) => {
+    return projArr.find(proj => proj.active == true);
+  }
+
+  const save = (projArr) => {
+    localStorage.setItem("user", JSON.stringify(projArr));
+  }
+
+  const getTask = (id, projArr) => {
+    const activeProj = getActiveProj(projArr);
+    if(activeProj){
+      // find the matching todo in the active project
+      return activeProj.todoList.find(todo => todo.id == id);
+    }
+    // No active projects (we are in the 'all' tab)
+    // search through all projects for the matching task.  
+    // if there were a ton of tasks it would be better to relate each task to it's project to avoid the nested for loop.
+    else{
+      for (let i = 0; i < projArr.length; i++){
+        for( let q = 0; i < projArr[i].todoList.length; q++){
+          if (projArr[i].todoList[q] == id){
+            return projArr[i].todoList[q];
+          }
+          q++;
+        }
+        i++;
+      }
+    }
+  }
+
+
+  return {
+    addNewProject,
+    setToActive,
+    getActiveProj,
+    addNewTask,
+    save,
+    getTask,
+  }
+})();
+
+
+
+
 
 
 const deleteProject = (id, allProjects) => {

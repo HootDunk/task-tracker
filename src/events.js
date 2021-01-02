@@ -35,6 +35,8 @@ const staticEvents = (() => {
       projectsPane.renderProjects(allProjects);
       // creates event listener for projects in the project pane
       dynamicEvents.projectNames();
+      //save to local storage
+      projectsArray.save(allProjects)
       // hide modal
       renderModal.toggle();
     })
@@ -62,16 +64,21 @@ const staticEvents = (() => {
         priority: newTaskForm.radios.value,
         description: newTaskForm["description"].value,
       }
-
+      // Adds the task to the projects array
       projectsArray.addNewTask(newTask.title, newTask.description, newTask.priority, newTask.dueDate, allProjects);
-
+      // get the active project
       const activeProj = projectsArray.getActiveProj(allProjects);
+      // clear the tasks then render them
       tasks.clear();
       tasks.render(activeProj.todoList);
+
       // create task event listeners
       dynamicEvents.editTaskBtns();
       dynamicEvents.expandedTodo();
       dynamicEvents.todoCheckBoxes();
+
+      // Save the projects array to local storage
+      projectsArray.save(allProjects)
       // // hide the modal
       renderModal.toggle();
     })
@@ -79,7 +86,8 @@ const staticEvents = (() => {
 
   const newTask = () => {
     newTaskBtn.addEventListener("click", () => {
-      createModalHTML();
+      // createModalHTML();
+      renderModal.taskHTML()
       newTaskSubmit();
       // create submit event listener
       renderModal.toggle();
@@ -154,16 +162,14 @@ const dynamicEvents = (() => {
   // Edit task details event
   const editTaskBtns = () => {
     const taskEditBtns = Array.from(document.getElementsByClassName("task-edit"));
-    taskEditBtns.forEach((task) => {
-      task.addEventListener("click", (e) => {
-        // e.target.data-id -> pass data id to logic function which retrieves the data
-        // data gets passed to the createTaskMarkup function to generate the pre-populated form
-    
-        // console.log(task.parentElement.parentElement)
-        // console.log(task.parentElement.parentElement.previousElementSibling)
- 
-        // need to get the data side of things going here and move this html to a render function
-        createModalHTML();
+    taskEditBtns.forEach((editBtn) => {
+      editBtn.addEventListener("click", (e) => {
+
+        // get task object using data-id below
+        let taskObj = projectsArray.getTask(editBtn.getAttribute("data-id"), allProjects);
+        // need to add the conditional checkbox in the taskHTML function and make fields required
+        renderModal.taskHTML(taskObj)
+
         renderModal.toggle();
 
       })

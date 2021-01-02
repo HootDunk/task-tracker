@@ -10,16 +10,15 @@ staticEvents.newProject();
 staticEvents.newTask();
 staticEvents.editProject();
 
-// where to put allProjects array and how to update it?
 
 
 
 // this only tests to see if there is a value in local storage.  doesn't ensure that the value you access is
 if(localStorage.length){
   
-  console.log(allProjects)
+
   // deleteProject("58c192f9-5be0-4fb1-8b36-d6e0054d04dc", allProjects)
-  // localStorage.setItem("user", JSON.stringify(allProjects));
+
 
   staticEvents.allBtn(allProjects);
   
@@ -44,21 +43,6 @@ else {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-// Save
-// localStorage.setItem("user", JSON.stringify(allProjects));
-
-// Delete
-// localStorage.removeItem("user")
 
 
 
