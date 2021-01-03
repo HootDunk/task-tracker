@@ -15,7 +15,6 @@ staticEvents.editProject();
 
 // this only tests to see if there is a value in local storage.  doesn't ensure that the value you access is
 if(localStorage.length){
-  
 
   // deleteProject("58c192f9-5be0-4fb1-8b36-d6e0054d04dc", allProjects)
 

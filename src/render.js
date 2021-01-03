@@ -1,54 +1,3 @@
-// need to know what specific data will be passed in here to finish the function
-// if typeof == object else
-// or maybe if (obj) else.  if theres a value, else.
-const createTaskMarkup = () => {
-  /*  
-  ** Have this data preparation come from a prior function.
-  if(obj){
-    let modalTitle = "Edit Task"
-    let todoTitle = obj.title
-  }
-  else {
-    let modalTitle = "New Task"
-    let todoTitle = ""
-  }
-  */
-  const html = `
-  <h1>${modalTitle}</h1>
-    <form id="modal-form">
-      <div class="form-row">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" value="${todoTitle}">
-        <label for="due-date">Due Date:</label>
-        <input type="date" id="date" name="date" value="${date}">
-      </div>
-      <div class="form-row">
-        <label>Difficulty</label>
-      </div>
-      <div class="form-row">
-        <div class="radio-toolbar">
-          <input type="radio" id="radio1" name="radios" value="#F5D346" ${low}>
-          <label for="radio1">Low</label>
-          <input type="radio" id="radio2" name="radios" value="#D98121" ${medium}>
-          <label for="radio2">Medium</label>
-          <input type="radio" id="radio3" name="radios" value="#D3151C" ${high}>
-          <label for="radio3">High</label>
-        </div>
-      </div>
-        <div class="form-row">
-          <label for="description">Description</label>
-        </div>
-        <div class="form-row">
-          <textarea id="description" name="description">${description}</textarea>
-        </div>
-        <div class="form-row bottom">
-          <button type="button">Delete</button>
-          <button type="submit">Submit</button>
-        </div>
-    </form>
-  `;
-}
-
 
 
 const createModalHTML = () => {
@@ -93,35 +42,6 @@ const createModalHTML = () => {
 }
 
 
-
-// const newProjectHTML = () => {
-//   modalContent.innerHTML = `
-//     <h1>New Project</h1>
-//     <form id="task-form">
-
-//       <div class="form-row">
-//         <label for="project-title">Title:</label>
-//       </div>
-
-//       <div class="form-row">
-//         <input type="text" id="project-title" name="project-title" value="">
-//       </div>
-
-
-//         <div class="form-row">
-//           <label for="project-description">Description</label>
-//         </div>
-//         <div class="form-row">
-//           <textarea id="project-description" name="project-description"></textarea>
-//         </div>
-//         <div class="form-row bottom">
-//           <button type="button">Delete</button>
-//           <button type="submit">Submit</button>
-//         </div>
-//     </form>
-//   `
-// }
-
 // Module housing functions that display information within the modal
 const renderModal = (() => {
 
@@ -135,66 +55,48 @@ const renderModal = (() => {
     modalOverlay.classList.toggle("closed");
   }
   // re-use newProjectHTML and make it work as an edit form and a new project form
-  const newProjectHTML = () => {
+  const projectHTML = (projObj) => {
+
+    let h1 = (projObj)? `<h1>Edit Project</h1>` : `<h1>New Project</h1>`;
+    let formTagContent = (projObj)? `data-id="${projObj.id}" id="modal-form"` : `id="modal-form"`;
+    let titleValue = (projObj)? `value="${projObj.name}"` : "";
+    let descriptionValue = (projObj)? `${projObj.description}` : ""; 
     modalContent.innerHTML = `
-      <h1>New Project</h1>
-      <form id="modal-form">
-  
+      ${h1}
+      <form ${formTagContent}>
         <div class="form-row">
           <label for="project-title">Title:</label>
         </div>
-  
         <div class="form-row">
-          <input type="text" id="project-title" name="project-title" required />
+          <input type="text" id="project-title" name="project-title" ${titleValue} required />
         </div>
-  
-  
-          <div class="form-row">
-            <label for="project-description">Description</label>
-          </div>
-          <div class="form-row">
-            <textarea id="project-description" name="project-description" required></textarea>
-          </div>
-          <div class="form-row bottom">
-            <button type="button">Delete</button>
-            <button type="submit">Submit</button>
-          </div>
+        <div class="form-row">
+          <label for="project-description">Description</label>
+        </div>
+        <div class="form-row">
+          <textarea id="project-description" name="project-description" required>${descriptionValue}</textarea>
+        </div>
+        <div class="form-row bottom">
+          <button type="button">Delete</button>
+          <button type="submit">Submit</button>
+        </div>
       </form>
-
     `
   }
-
-  // this.id = uuidv4();
-  // this.title = title;
-  // this.description = description;
-  // this.priority = priority;
-  // this.complete = false;
-  // this.dueDate = dueDate; // may need to create the date here from the date string
-
-//   <div class="radio-toolbar">
-//   <input type="radio" id="radio1" name="radios" value="#F5D346" ${taskObj.priority == "#F5D346"? "checked" : ""}>
-//   <label for="radio1">Low</label>
-//   <input type="radio" id="radio1\2" name="radios" value="#F5D346" ${taskObj.priority == "#D98121"? "checked" : ""}>
-//   <label for="radio2">Medium</label>
-//   <input type="radio" id="radio3" name="radios" value="#D3151C" ${taskObj.priority == "#D98121"? "checked" : ""}>
-//   <label for="radio3">High</label>
-// </div>
 
   // creates HTML for creating new tasks and editing old tasks
   // must include identifiers to support events for editing and deleting data
   const taskHTML = (taskObj) => {
-    // const title = '<input type="text" id="title" name="title">';
-    // const title1 = `<input type="text" id="title" name="title" value="${taskObj.title}">`;
 
     let title = (taskObj)? `<input type="text" id="title" name="title" value="${taskObj.title}">` : `<input type="text" id="title" name="title">`;
     let dueDate = (taskObj)? `<input type="date" id="date" name="date" value="${taskObj.dueDate}">` : '<input type="date" id="date" name="date">';
     let priority = (taskObj)? `
     <div class="radio-toolbar">
-      <input type="radio" id="radio1" name="radios" value="#F5D346" checked>
+      <input type="radio" id="radio1" name="radios" value="#F5D346" ${(taskObj.priority == "#F5D346")? "checked" : ""}>
       <label for="radio1">Low</label>
-      <input type="radio" id="radio2" name="radios" value="#D98121">
+      <input type="radio" id="radio2" name="radios" value="#D98121" ${(taskObj.priority == "#D98121")? "checked" : ""}>
       <label for="radio2">Medium</label>
-      <input type="radio" id="radio3" name="radios" value="#D3151C">
+      <input type="radio" id="radio3" name="radios" value="#D3151C" ${(taskObj.priority == "#D3151C")? "checked" : ""}>
       <label for="radio3">High</label>
     </div>
     `
@@ -216,7 +118,7 @@ const renderModal = (() => {
 
     modalContent.innerHTML = `
     <h1>${taskObj? "Edit Task" : "New Task"}</h1>
-    <form id="modal-form">
+    <form data-id="${(taskObj)? taskObj.id : ""}" id="modal-form">
       <div class="form-row">
         <label for="title">Title:</label>
         ${title}
@@ -244,7 +146,7 @@ const renderModal = (() => {
   }
 
   return {
-    newProjectHTML,
+    projectHTML,
     toggle,
     taskHTML,
   }
@@ -276,11 +178,23 @@ const projectsPane = (() => {
     })
     
   }
+  // called after a project is edited or deleted
+  const updateProjectNames = (id, projObj) => {
+    const projects = document.getElementsByClassName("project-name");
+    for(let i = 0; i < projects.length; i++){
+      if (projects[i].getAttribute('data-id') == id){
+        projects[i].innerText = projObj.name;
+        return;
+      }
+    }
+    
+  }
 
   return {
     renderProjects,
     clearProjects,
     setBackground,
+    updateProjectNames,
   }
 
 })();

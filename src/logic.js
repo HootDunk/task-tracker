@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
 
-
 function Project(name, description) {
   this.id = uuidv4();
   this.name = name;
@@ -29,7 +28,6 @@ Project.prototype.getTodoItem = function(id) {
 }
 
 
-
 function Todo(title, description, priority, dueDate) {
   this.id = uuidv4();
   this.title = title;
@@ -39,25 +37,20 @@ function Todo(title, description, priority, dueDate) {
   this.dueDate = dueDate; // may need to create the date here from the date string
 }
 
-// Todo.prototype.sayID = function() {
-//   console.log(this.id)
-// }
-
-// Todo.prototype.toggleComplete = function() {
-//   this.complete = !this.complete;
-// }
-
-
 
 // retrieves projects from local storage
   // first parses the JSON string into an array of objects
   // then it recreates the objects with object.assign (this re-attaches the prototypes which are lost when saved to local storage)
+
+  // *** need to set all projects to inactive on startup or render the active project
 const getProjects = () => {
   if (localStorage.length){
     const assignedObjArr = [];
     const simpleObjArr = JSON.parse(localStorage.getItem('user'))
     simpleObjArr.forEach(item => {
       const copy = Object.assign(new Project, item)
+      // set active to false since the app starts with 'All' selected
+      copy.active = false;
       assignedObjArr.push(copy)
     })
     return assignedObjArr;
@@ -83,9 +76,40 @@ const projectsArray = (() => {
     projArr.forEach((proj) => {
       if(proj.active == true){
         proj.addTodo(task);
-
       }
     })
+  }
+
+  const editTask = (id, editObj, projArr) => {
+    const activeProj = getActiveProj(projArr);
+    if(activeProj){
+      // get the task
+      const taskIndex = activeProj.todoList.findIndex(todo => todo.id == id);
+      activeProj.todoList[taskIndex].title = editObj.title;
+      activeProj.todoList[taskIndex].dueDate = editObj.dueDate;
+      activeProj.todoList[taskIndex].priority = editObj.priority;
+      activeProj.todoList[taskIndex].description = editObj.description;
+    }
+    // No active projects (we are in the 'all' tab)
+    // search through all projects for the matching task.  
+    else{
+      for (let i = 0; i < projArr.length; i++){
+        for( let q = 0; q < projArr[i].todoList.length; q++){
+          if (projArr[i].todoList[q].id == id){
+            projArr[i].todoList[q].title = editObj.title;
+            projArr[i].todoList[q].dueDate = editObj.dueDate;
+            projArr[i].todoList[q].priority = editObj.priority;
+            projArr[i].todoList[q].description = editObj.description;
+          }
+        }
+      }
+    }
+  }
+
+  const editProject = (projObj, projArr) => {
+    const index = projArr.findIndex(proj => proj.id == projObj.id);
+    projArr[index].name = projObj.name;
+    projArr[index].description = projObj.description;
   }
 
   // sets project to active
@@ -93,8 +117,16 @@ const projectsArray = (() => {
     projArr.forEach(proj => proj.id == id ? proj.active = true : proj.active = false);
   }
 
+  const allToInactive = (projArr) => {
+    projArr.forEach(proj => proj.active = false);
+  }
+
   const getActiveProj = (projArr) => {
     return projArr.find(proj => proj.active == true);
+  }
+
+  const getActiveIndex = (projArr) => {
+    return projArr.findIndex(proj => proj.active == true);
   }
 
   const save = (projArr) => {
@@ -109,16 +141,14 @@ const projectsArray = (() => {
     }
     // No active projects (we are in the 'all' tab)
     // search through all projects for the matching task.  
-    // if there were a ton of tasks it would be better to relate each task to it's project to avoid the nested for loop.
+    // if there were a ton of tasks it would be better to relate each task to it's project and avoid the nested for-loop.
     else{
       for (let i = 0; i < projArr.length; i++){
-        for( let q = 0; i < projArr[i].todoList.length; q++){
-          if (projArr[i].todoList[q] == id){
+        for( let q = 0; q < projArr[i].todoList.length; q++){
+          if (projArr[i].todoList[q].id == id){
             return projArr[i].todoList[q];
           }
-          q++;
         }
-        i++;
       }
     }
   }
@@ -127,10 +157,14 @@ const projectsArray = (() => {
   return {
     addNewProject,
     setToActive,
+    editProject,
     getActiveProj,
+    getActiveIndex,
     addNewTask,
     save,
     getTask,
+    allToInactive,
+    editTask,
   }
 })();
 

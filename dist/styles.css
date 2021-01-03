@@ -97,6 +97,10 @@ button {
   background: #444a4d;
 }
 
+#all-projects {
+  background-color: rgb(68, 74, 77);
+}
+
 
 #main-panel-header h1{
   font-family: 'Lato', sans-serif;
