@@ -28,13 +28,16 @@ Project.prototype.getTodoItem = function(id) {
 }
 
 
+
+
+
 function Todo(title, description, priority, dueDate) {
   this.id = uuidv4();
   this.title = title;
   this.description = description;
   this.priority = priority;
   this.complete = false;
-  this.dueDate = dueDate; // may need to create the date here from the date string
+  this.dueDate = dueDate;
 }
 
 
@@ -62,7 +65,7 @@ const getProjects = () => {
 
 const allProjects = getProjects();
 
-// module function to house all array methods for the projects array
+// module function to house all array methods used on the projects array.
 const projectsArray = (() => {
 
   const addNewProject = (name, description, projArr) => {
@@ -71,6 +74,7 @@ const projectsArray = (() => {
   }
 
   const addNewTask = (title, description, priority, dueDate, projArr) => {
+    // could always create the date here.
     const task = new Todo(title, description, priority, dueDate);
     // iterate through array, find the active project object
     projArr.forEach((proj) => {
@@ -100,6 +104,26 @@ const projectsArray = (() => {
             projArr[i].todoList[q].dueDate = editObj.dueDate;
             projArr[i].todoList[q].priority = editObj.priority;
             projArr[i].todoList[q].description = editObj.description;
+          }
+        }
+      }
+    }
+  }
+
+  const toggleTask = (id, projArr) => {
+    const activeProj = getActiveProj(projArr);
+    if(activeProj){
+      // get the task
+      const taskIndex = activeProj.todoList.findIndex(todo => todo.id == id);
+      activeProj.todoList[taskIndex].complete = !activeProj.todoList[taskIndex].complete;
+    }
+    // No active projects (we are in the 'all' tab)
+    // search through all projects for the matching task.  
+    else{
+      for (let i = 0; i < projArr.length; i++){
+        for( let q = 0; q < projArr[i].todoList.length; q++){
+          if (projArr[i].todoList[q].id == id){
+            projArr[i].todoList[q].complete = !projArr[i].todoList[q].complete;
           }
         }
       }
@@ -165,12 +189,9 @@ const projectsArray = (() => {
     getTask,
     allToInactive,
     editTask,
+    toggleTask,
   }
 })();
-
-
-
-
 
 
 const deleteProject = (id, allProjects) => {
@@ -190,42 +211,3 @@ export {
   projectsArray,
   allProjects
 }
-
-
-
-
-
-//Brainstorm UI actions and how they relate to the data
-
-// I click delete from within the edit todo modal.
-  /*
-    delete button has data-id of that todo item
-    find project with status set to active
-    iterate through obj.todoList and find the todo item with the matching id
-      entire function should be a prototype of the project object as the todo items
-      are created inside a function and appended to list.
-    delete this todo item (from the list).
-
-    how would this work if all projects are active?
-    function should continue going over all active projects and only
-    stop execution once the todo item is found.  if active -> enter and search. else next project. only return/halt execution if found.
-  */
-
-// On page load / when 'All' projects is clicked
-/*
-  all projects are set to active.
-  call render todos which displays all active project's todos.
-  event listener for 'All' will need speacial considerations
-*/
-
-// Navigating across projects
-/*
-  The currently displayed projects id is set to the data-id of the new task button.
-  Clicking a new project sets its id to the data-id of the new task button.
-*/
-
-
-// figure out the rendering individual tasks from a project
-// first figure out task rendering
-// then call task rendering from the proper event.
-// re-initialize all dynamic events or create a method for it and call it

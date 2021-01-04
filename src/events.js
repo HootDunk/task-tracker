@@ -1,6 +1,6 @@
 
-import { createModalHTML, renderModal, projectsPane, tasks, showHeaderInfo } from './render';
-import {Todo, Project, projectsArray, allProjects} from './logic';
+import { renderModal, projectsPane, tasks, showHeaderInfo, toggleSortButtons } from './render';
+import { projectsArray, allProjects } from './logic';
 
 
 // No rendering and no data parsing in the events.
@@ -17,6 +17,8 @@ const staticEvents = (() => {
   const newProjectBtn = document.getElementById("new-project");
   const newTaskBtn = document.getElementById("new-task");
   const editProjectBtn = document.getElementById("edit-project");
+  const dueDateBtn = document.getElementById("due-date");
+  const difficultyBtn = document.getElementById("difficulty");
 
   const modalClose = () => {
   closeButton.addEventListener("click", function() {
@@ -110,17 +112,15 @@ const staticEvents = (() => {
       }
       // finds the task in the array and updates its values
       projectsArray.editTask(newTask.id, newTask, allProjects)
-
       // get the active project (if an active project exists, render those todos, otherwise render all todos))
       const activeProj = projectsArray.getActiveProj(allProjects);
       tasks.clear();
+      // move this to the render function
       (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
-
       // create task event listeners
       dynamicEvents.editTaskBtns();
       dynamicEvents.expandedTodo();
       dynamicEvents.todoCheckBoxes();
-
       // Save the projects array to local storage
       projectsArray.save(allProjects)
       // hide the modal
@@ -132,13 +132,17 @@ const staticEvents = (() => {
   const allBtn = (allProjects) => {
     const allProjectsBtn = document.getElementById("all-projects");
     allProjectsBtn.addEventListener("click", (e) => {
+      // set all projects active key to a value of false
       projectsArray.allToInactive(allProjects);
+      // clear task area and render all projects
       tasks.clear();
       tasks.renderAll(allProjects)
-      console.log("allBtn() ", allProjects)
+      // Create object to describe the 'all' tab use it to display the header.
       const allLiteral = {name: "All", description: "Viewing all projects"};
       showHeaderInfo(allLiteral)
-      projectsPane.setBackground(e.target.getAttribute('data-id'));
+      // active project recieves light background, all others set to transparent
+      projectsPane.setBackground(e.target.dataset.id);
+      // initialize event listeners for all tasks
       dynamicEvents.editTaskBtns();
       dynamicEvents.expandedTodo();
       dynamicEvents.todoCheckBoxes();
@@ -168,17 +172,36 @@ const staticEvents = (() => {
     })
   }
 
-
   const editProject = () => {
     editProjectBtn.addEventListener("click", () => {
-
-      console.log("lets edit the project")
       const activeProj = projectsArray.getActiveProj(allProjects);
       renderModal.projectHTML(activeProj);
       // event listener for submit goes here
       editProjectSubmit();
       // event listener for delete
       renderModal.toggle();
+    })
+  }
+
+  const dueDateSort = () => {
+    dueDateBtn.addEventListener("click", () => {
+      toggleSortButtons();
+
+      // const activeProj = projectsArray.getActiveProj(allProjects);
+      // tasks.clear();
+      // // move this to the render function
+      // (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
+    })
+  }
+
+  const difficultySort = () => {
+    difficultyBtn.addEventListener("click", () => {
+      toggleSortButtons();
+
+      // const activeProj = projectsArray.getActiveProj(allProjects);
+      // tasks.clear();
+      // // move this to the render function
+      // (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
     })
   }
 
@@ -189,6 +212,8 @@ const staticEvents = (() => {
     allBtn,
     editProject,
     editTaskSubmit,
+    dueDateSort,
+    difficultySort,
   }
 })();
 
@@ -202,9 +227,10 @@ const dynamicEvents = (() => {
   const todoCheckBoxes = Array.from(document.getElementsByClassName("todo-completed"));
   todoCheckBoxes.forEach((checkbox) => {
     checkbox.addEventListener("click", (e) => {
-      const taskDiv = e.target.parentElement.parentElement;
-      const taskID = taskDiv.getAttribute("data-id");
-      console.log("todoCheckBoxes", taskID)
+      e.target.parentElement.classList.toggle("completed")
+      const taskID = e.target.parentElement.parentElement.dataset.id;
+      projectsArray.toggleTask(taskID, allProjects)
+      projectsArray.save(allProjects)
     })
   })
   }
@@ -286,3 +312,5 @@ export {
 
 
 
+
+// bundle task dynamic events into a function which calls all three for clarity

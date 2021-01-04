@@ -1,46 +1,5 @@
-
-
-const createModalHTML = () => {
-  const modalContent = document.querySelector(".modal-guts")
-  // console.log(modalContent)
-  const modalTitle = "Edit Task"
-  const todoTitle = "";
-  modalContent.innerHTML = `
-  <h1>${modalTitle}</h1>
-  <form id="modal-form">
-    <div class="form-row">
-      <label for="title">Title:</label>
-      <input type="text" id="title" name="title" value="${todoTitle}">
-      <label for="due-date">Due Date:</label>
-      <input type="date" id="date" name="date" value="">
-    </div>
-    <div class="form-row">
-      <label>Difficulty</label>
-    </div>
-    <div class="form-row">
-      <div class="radio-toolbar">
-        <input type="radio" id="radio1" name="radios" value="#F5D346">
-        <label for="radio1">Low</label>
-        <input type="radio" id="radio2" name="radios" value="#D98121">
-        <label for="radio2">Medium</label>
-        <input type="radio" id="radio3" name="radios" value="#D3151C">
-        <label for="radio3">High</label>
-      </div>
-    </div>
-      <div class="form-row">
-        <label for="description">Description</label>
-      </div>
-      <div class="form-row">
-        <textarea id="description" name="description"></textarea>
-      </div>
-      <div class="form-row bottom">
-        <button type="button">Delete</button>
-        <button type="submit">Submit</button>
-      </div>
-  </form>
-  `;
-}
-
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import compareAsc from 'date-fns/compareAsc'
 
 // Module housing functions that display information within the modal
 const renderModal = (() => {
@@ -48,7 +7,6 @@ const renderModal = (() => {
   const modalContent = document.querySelector(".modal-guts");
   const modal = document.querySelector("#modal");
   const modalOverlay = document.querySelector("#modal-overlay");
-
 
   const toggle = () => {
     modal.classList.toggle("closed");
@@ -199,6 +157,41 @@ const projectsPane = (() => {
 
 })();
 
+// year, month, day
+const dateStringToDateObj = (dueDate) => {
+  const date = new Date(dueDate.substring(0,4), Number(dueDate.substring(5,7)) - 1, dueDate.substring(8,10))
+  // for some reason, our date object ends up back as a string after adding it to the Todo object.
+  console.log(typeof date)
+  return date;
+}
+
+const getDateInWords = (date) => {
+  const today = new Date();
+  
+  let dateString;
+  // date has passed
+  if(compareAsc(date, today) == -1){
+    let dateNum = differenceInCalendarDays(today, date);
+    if (dateNum == 1){
+      dateString = "1 day past"
+    }
+    else {
+      dateString = `${dateNum} days past`
+    }
+  }
+  // date is upcoming
+  else if (compareAsc(date, today) == 1){
+    let dateNum = differenceInCalendarDays(date, today);
+    if (dateNum == 1){
+      dateString = "In 1 day";
+    }
+    else {
+      dateString = `In ${dateNum} days`
+    }
+  }
+  return dateString;
+}
+
 
 // Module function for rendering tasks in the main content area 
 const tasks = (() => {
@@ -208,21 +201,38 @@ const tasks = (() => {
     taskContent.innerHTML = "";
   }
 
+  const renderOrder = (taskArr) => {
+    const sortBtns = document.getElementsByClassName("sort-button");
+
+    if (sortBtns[0].classList.value == "underline sort-button"){
+      console.log("sort by due date")
+      // call taskArr.sort(duedate)
+    }
+    else {
+      // call taskArr.sort(difficulty)
+    }
+  }
+  
+
   const taskHTML = (taskObj) => {
+    console.log("taskHTML 180, dueDate = ", taskObj.dueDate)
+    // create the date object here because the date object was getting converted to a string when adding it to the todo object.
+    const date = dateStringToDateObj(taskObj.dueDate)
+    const dayDifference = getDateInWords(date);
     const HTML = `
     <div data-id="${taskObj.id}" class="task-item">
-      <div class="task accordian">
+      <div class="task accordian ${(taskObj.complete == true)? "completed" : ""}">
   
-        <div style="background-color:${taskObj.priority}"id="priority-style"></div>
+        <div style="background-color:${taskObj.priority}; "id="priority-style"></div>
         <input type="checkbox" class="todo-completed" ${taskObj.complete == true ? "checked" : ""}>
         <h2 class="title">${taskObj.title}</h2>
-        <h2 class="date">In X days</h2>
+        <h2 class="date">${dayDifference}</h2>
   
       </div>
       <div class="task-full inactive">
         <div class="description-top">
           <h3>Description:</h3>
-          <h3>10/20/20</h3>
+          <h3>${date.toDateString()}</h3>
           <i data-id="${taskObj.id}" class="fas fa-ellipsis-v task-edit"></i>
         </div>
         <p>${taskObj.description}</p>
@@ -232,8 +242,11 @@ const tasks = (() => {
     return HTML;
   }
   
-  
   const render = (taskArr) => {
+    renderOrder()
+    // this works, call a function which decides the sort method to be used.
+    // then sort the array based on this and proceed as normal
+    taskArr.sort((a, b) => a.complete - b.complete);
     if(taskArr.length){
       taskArr.forEach(task => {
         taskContent.innerHTML += taskHTML(task);
@@ -244,10 +257,16 @@ const tasks = (() => {
   }
 
   const renderAll = (allProjects) => {
+    let tempArr = []
     allProjects.forEach(project => {
-      tasks.render(project.todoList)
+      project.todoList.forEach(item => {
+        tempArr.push(item)
+      })
     })
+    tasks.render(tempArr)
   }
+
+
 
   return {
     clear,
@@ -266,15 +285,62 @@ const showHeaderInfo = (proj) => {
 
 }
 
+const toggleSortButtons = () => {
+  const dueDateBtn = document.getElementById("due-date");
+  const difficultyBtn = document.getElementById("difficulty");
+  difficultyBtn.classList.toggle("underline");
+  dueDateBtn.classList.toggle("underline")
+}
+
+
+// Compare module with methods to use when sorting the array
+const compare = (() => {
+
+  // place the function that decides sort order inside here? (make sure render is not called if the button clicked is the one already selected)
+  // it calls on dueDate or difficulty.  it's sort of the 'master' function.
+
+  // create two arrays one with the completed values == true and one with completed values == false
+  // now sort them by duedate or difficulty.
+  // join them with the completed ones coming first? sort order is dependent on render order. double check these
+
+  const dueDate = (a, b) => {
+
+  }
+
+  const difficulty = () => {
+
+  }
+
+  return {
+    dueDate,
+    difficulty,
+  }
+
+})();
 
 
 
 export {
-  createModalHTML,
   renderModal,
   projectsPane,
   tasks,
   showHeaderInfo,
+  toggleSortButtons,
 }
 
-// consider making a module function for all the modal rendering as they will share variables
+
+
+
+// turn this in to a sort of 'master render' function.. maybe. means we would need to import from logic :/
+// const activeProj = projectsArray.getActiveProj(allProjects);
+// (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
+
+// get sort buttons collection
+  // prior to render, examine which one has the class
+  // sort array based on this
+  // then call render
+
+// pass in the array and changes are made by reference :)
+
+
+// need to get going with the dates

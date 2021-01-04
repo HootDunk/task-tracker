@@ -9,7 +9,8 @@ staticEvents.modalClose();
 staticEvents.newProject();
 staticEvents.newTask();
 staticEvents.editProject();
-
+staticEvents.dueDateSort();
+staticEvents.difficultySort();
 
 
 
@@ -20,6 +21,7 @@ if(localStorage.length){
 
 
   staticEvents.allBtn(allProjects);
+  console.log(allProjects)
   
   // allProjects.forEach(project => console.log(project))
   allProjects.sort((a, b) => a.name.localeCompare(b.name));
