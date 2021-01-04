@@ -397,6 +397,13 @@ input[type="checkbox"] {
   font-size: 15px;
 }
 
+.completed {
+  text-decoration: line-through;
+}
+
+.underline {
+  text-decoration: underline;
+}
 
 
 
