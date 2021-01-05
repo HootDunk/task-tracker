@@ -16,6 +16,7 @@ const staticEvents = (() => {
   const modalClose = () => {
   closeButton.addEventListener("click", function() {
     renderModal.toggle();
+    
   });
   }
   
@@ -161,13 +162,38 @@ const staticEvents = (() => {
     })
   }
 
+  const deleteProjectBtn = () => {
+    const deleteBtn = document.getElementById("delete-button");
+    deleteBtn.addEventListener("click", (e) => {
+      const projID = e.target.parentElement.parentElement.dataset.id;
+
+      projectsArray.deleteProject(projID, allProjects)
+
+      projectsPane.clearProjects();
+      projectsPane.renderProjects(allProjects);
+      dynamicEvents.projectNames();
+
+      projectsPane.setBackground('all');
+      tasks.clear();
+      tasks.renderAll(allProjects)
+
+      dynamicEvents.editTaskBtns();
+      dynamicEvents.expandedTodo();
+      dynamicEvents.todoCheckBoxes();
+
+      projectsArray.save(allProjects)
+      renderModal.toggle();
+
+    })
+  }
+
   const editProject = () => {
     editProjectBtn.addEventListener("click", () => {
       const activeProj = projectsArray.getActiveProj(allProjects);
       renderModal.projectHTML(activeProj);
-      // event listener for submit goes here
+      
       editProjectSubmit();
-      // event listener for delete
+      deleteProjectBtn();
       renderModal.toggle();
     })
   }
@@ -192,6 +218,8 @@ const staticEvents = (() => {
     })
   }
 
+
+
   return {
     modalClose,
     newProject,
@@ -213,9 +241,18 @@ const dynamicEvents = (() => {
   const todoCheckBoxes = Array.from(document.getElementsByClassName("todo-completed"));
   todoCheckBoxes.forEach((checkbox) => {
     checkbox.addEventListener("click", (e) => {
-      e.target.parentElement.classList.toggle("completed")
+      // e.target.parentElement.classList.toggle("completed")
       const taskID = e.target.parentElement.parentElement.dataset.id;
       projectsArray.toggleTask(taskID, allProjects)
+
+      const activeProj = projectsArray.getActiveProj(allProjects);
+      // clear the tasks then render them
+      tasks.clear();
+      (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
+      // create task event listeners
+      dynamicEvents.editTaskBtns();
+      dynamicEvents.expandedTodo();
+      dynamicEvents.todoCheckBoxes();
 
       projectsArray.save(allProjects)
     })

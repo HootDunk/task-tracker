@@ -21,7 +21,7 @@ const renderModal = (() => {
     let formTagContent = (projObj)? `data-id="${projObj.id}" id="modal-form"` : `id="modal-form"`;
     let titleValue = (projObj)? `value="${projObj.name}"` : "";
     let descriptionValue = (projObj)? `${projObj.description}` : ""; 
-    let input = (projObj)? `<button type="button">Delete</button><button type="submit">Submit</button>` : `<button type="submit">Submit</button>`;
+    let input = (projObj)? `<button id="delete-button" type="button">Delete</button><button type="submit">Submit</button>` : `<button type="submit">Submit</button>`;
     modalContent.innerHTML = `
       ${h1}
       <form ${formTagContent}>
@@ -112,8 +112,6 @@ const renderModal = (() => {
 })();
 
 
-
-
 const projectsPane = (() => {
   const projectContent = document.getElementById('dynamic-projects');
   const renderProjects = (projectArr) => {
@@ -157,22 +155,6 @@ const projectsPane = (() => {
   }
 
 })();
-
-// year, month, day
-// const dateStringToDateObj = (dueDate) => {
-//   let date;
-//   if (dueDate.length == 10){
-//     date = new Date(dueDate.substring(0,4), Number(dueDate.substring(5,7)) - 1, dueDate.substring(8,10))
-//   }
-//   else {
-//     console.log(dueDate)
-//     date = new Date(dueDate);
-//     console.log(date)
-//   }
-  
-//   return date;
-// }
-
 
 const getDateInWords = (date) => {
   const today = new Date();
@@ -236,11 +218,22 @@ const tasks = (() => {
     return HTML;
   }
 
+  const dueDateAsc = (a, b) => {
+    const result = compareAsc(a.dueDate, b.dueDate);
+    return result;
+  }
+  const dueDateDesc = (a, b) => {
+    const result = compareDesc(a.dueDate, b.dueDate);
+    return result;
+  }
+
   const sortTasks = (taskArr) => {
     const completed = taskArr.filter(task => task.complete == true);
     const inProgress = taskArr.filter(task => task.complete == false);
-    completed.sort(compareDesc)
-    inProgress.sort(compareAsc)
+    completed.sort(dueDateDesc)
+    console.log(completed)
+    inProgress.sort(dueDateAsc)
+    console.log(inProgress)
     taskArr = inProgress.concat(completed);
     return taskArr;
   }
@@ -288,32 +281,6 @@ const toggleSortButtons = () => {
   difficultyBtn.classList.toggle("underline");
   dueDateBtn.classList.toggle("underline")
 }
-
-// // Compare module with methods to use when sorting the array
-// const order = (() => {
-
-//   // const dueDateAsc = (a, b) => {
-//   //   const result = compareAsc(a.dueDate, b.dueDate);
-//   //   return result;
-//   // }
-//   // const dueDateDesc = (a, b) => {
-//   //   const result = compareDesc(a.dueDate, b.dueDate);
-//   //   return result;
-//   // }
-
-//   const sortTasks = (taskArr) => {
-//     const completed = taskArr.filter(task => task.complete == true);
-//     const inProgress = taskArr.filter(task => task.complete == false);
-//     completed.sort(compareDesc)
-//     inProgress.sort(compareAsc)
-//     taskArr = inProgress.concat(completed);
-//     return taskArr;
-//   }
-
-
-// })();
-
-
 
 
 export {

@@ -211,6 +211,11 @@ const projectsArray = (() => {
       }
     }
   }
+
+  const deleteProject = (id, allProjects) => {
+    const index = allProjects.findIndex(project => project.id == id);
+    allProjects.splice(index, 1);
+  }
   
 
 
@@ -226,20 +231,17 @@ const projectsArray = (() => {
     allToInactive,
     editTask,
     toggleTask,
-    deleteTask
+    deleteTask,
+    deleteProject
   }
 })();
 
 
-const deleteProject = (id, allProjects) => {
-  const index = allProjects.findIndex(project => project.id == id);
-  allProjects.splice(index, 1);
-}
+
 
 export {
   Todo,
   Project,
-  deleteProject,
   projectsArray,
   allProjects
 }

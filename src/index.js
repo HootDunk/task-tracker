@@ -38,12 +38,12 @@ else {
 
 // KNOWN PROBLEMS
 
-  // either edit the new task form when 'all' is selected or hide the button
+  // break up the taskFormHtml funciton or whetever it's called (or create a separate one to call from all. is easier but more code)
+  // create a method to add the project dropdown when selecting from all
+  // dropdown needs to be propulated with js
 
   // need to add auto sample project and sample tasks when app is opened for first time by others
   // also add the re-render call for checkboxes
-
-  // Wait! Still need to add the delete project and delete task ability
 
   // thats all that's left :)
 
