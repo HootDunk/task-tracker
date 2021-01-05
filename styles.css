@@ -331,16 +331,8 @@ input[type="checkbox"] {
 }
 
 select {
-
-  min-width: 70%;
-  height: 76px;
+  min-width: 177px;
   font-size: 20px;
-  text-align: center;
-  /* border-radius: .5em; */
-  outline: none;
-
-
-  
 }
 
 
