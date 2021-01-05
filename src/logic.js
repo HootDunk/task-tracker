@@ -28,8 +28,18 @@ Project.prototype.getTodoItem = function(id) {
 }
 
 
-
-
+// year, month, day
+const dateStringToDateObj = (dueDate) => {
+  let date;
+  if (dueDate.length == 10){
+    date = new Date(dueDate.substring(0,4), Number(dueDate.substring(5,7)) - 1, dueDate.substring(8,10))
+  }
+  else {
+    date = new Date(dueDate);
+  }
+  
+  return date;
+}
 
 function Todo(title, description, priority, dueDate) {
   this.id = uuidv4();
@@ -37,15 +47,13 @@ function Todo(title, description, priority, dueDate) {
   this.description = description;
   this.priority = priority;
   this.complete = false;
-  this.dueDate = dueDate;
+  this.dueDate = dateStringToDateObj(dueDate);
 }
 
 
 // retrieves projects from local storage
   // first parses the JSON string into an array of objects
   // then it recreates the objects with object.assign (this re-attaches the prototypes which are lost when saved to local storage)
-
-  // *** need to set all projects to inactive on startup or render the active project
 const getProjects = () => {
   if (localStorage.length){
     const assignedObjArr = [];
@@ -54,7 +62,18 @@ const getProjects = () => {
       const copy = Object.assign(new Project, item)
       // set active to false since the app starts with 'All' selected
       copy.active = false;
+
       assignedObjArr.push(copy)
+    })
+    // Had to add this to fix a rather strange peculiarity.  
+    // Dates were recreated as objects just fine for all todoList items except ones with complete = true;
+    // This checks each todo item and makes sure the dueDate is an object
+    assignedObjArr.forEach(proj => {
+      proj.todoList.forEach(todo => {
+        if(typeof todo.dueDate == "string"){
+          todo.dueDate = dateStringToDateObj(todo.dueDate)
+        }
+      })
     })
     return assignedObjArr;
   }
@@ -84,24 +103,25 @@ const projectsArray = (() => {
     })
   }
 
+  // POTENTIAL PROBLEM
+  // here's where the problem likely lies as far as dates go.  or at least there is a potential problem
   const editTask = (id, editObj, projArr) => {
     const activeProj = getActiveProj(projArr);
     if(activeProj){
       // get the task
       const taskIndex = activeProj.todoList.findIndex(todo => todo.id == id);
+      // use object.entries?
       activeProj.todoList[taskIndex].title = editObj.title;
-      activeProj.todoList[taskIndex].dueDate = editObj.dueDate;
+      activeProj.todoList[taskIndex].dueDate = dateStringToDateObj(editObj.dueDate);
       activeProj.todoList[taskIndex].priority = editObj.priority;
       activeProj.todoList[taskIndex].description = editObj.description;
     }
-    // No active projects (we are in the 'all' tab)
-    // search through all projects for the matching task.  
     else{
       for (let i = 0; i < projArr.length; i++){
         for( let q = 0; q < projArr[i].todoList.length; q++){
           if (projArr[i].todoList[q].id == id){
             projArr[i].todoList[q].title = editObj.title;
-            projArr[i].todoList[q].dueDate = editObj.dueDate;
+            projArr[i].todoList[q].dueDate = dateStringToDateObj(editObj.dueDate);
             projArr[i].todoList[q].priority = editObj.priority;
             projArr[i].todoList[q].description = editObj.description;
           }
@@ -124,6 +144,24 @@ const projectsArray = (() => {
         for( let q = 0; q < projArr[i].todoList.length; q++){
           if (projArr[i].todoList[q].id == id){
             projArr[i].todoList[q].complete = !projArr[i].todoList[q].complete;
+          }
+        }
+      }
+    }
+  }
+
+  const deleteTask = (id, projArr) => {
+    const activeProj = getActiveProj(projArr);
+    if(activeProj){
+      // get the task
+      const taskIndex = activeProj.todoList.findIndex(todo => todo.id == id);
+      activeProj.todoList.splice(taskIndex, 1)
+    } 
+    else{
+      for (let i = 0; i < projArr.length; i++){
+        for( let q = 0; q < projArr[i].todoList.length; q++){
+          if (projArr[i].todoList[q].id == id){
+            projArr[i].todoList.splice(q, 1);
           }
         }
       }
@@ -163,9 +201,6 @@ const projectsArray = (() => {
       // find the matching todo in the active project
       return activeProj.todoList.find(todo => todo.id == id);
     }
-    // No active projects (we are in the 'all' tab)
-    // search through all projects for the matching task.  
-    // if there were a ton of tasks it would be better to relate each task to it's project and avoid the nested for-loop.
     else{
       for (let i = 0; i < projArr.length; i++){
         for( let q = 0; q < projArr[i].todoList.length; q++){
@@ -176,6 +211,7 @@ const projectsArray = (() => {
       }
     }
   }
+  
 
 
   return {
@@ -190,6 +226,7 @@ const projectsArray = (() => {
     allToInactive,
     editTask,
     toggleTask,
+    deleteTask
   }
 })();
 
@@ -198,11 +235,6 @@ const deleteProject = (id, allProjects) => {
   const index = allProjects.findIndex(project => project.id == id);
   allProjects.splice(index, 1);
 }
-
-
-
-
-
 
 export {
   Todo,

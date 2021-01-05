@@ -14,6 +14,10 @@
   background: transparent;  /* Optional: just make scrollbar invisible */
 }
 
+/* p {
+  text-align: center;
+} */
+
 #content {
   display: flex;
 }
@@ -321,6 +325,31 @@ input[type="checkbox"] {
 }
 
 
+.form-col {
+  display: inline-block;
+  
+}
+
+select {
+
+  min-width: 70%;
+  height: 76px;
+  font-size: 20px;
+  text-align: center;
+  /* border-radius: .5em; */
+  outline: none;
+
+
+  
+}
+
+
+
+.form-row.space-between {
+  justify-content: space-between;
+}
+
+
 #modal-form input[type="radio"]{
   margin: 10px 10px 10px 10px;
   width: 30px;
@@ -405,5 +434,7 @@ input[type="checkbox"] {
   text-decoration: underline;
 }
 
-
+.hidden {
+   visibility: hidden;
+}
 

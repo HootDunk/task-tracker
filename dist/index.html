@@ -37,7 +37,7 @@
           <hr>
         </div>
         <div id="main-content-controls">
-          <h3>Sort by : <button id="due-date" class="underline sort-button" type="button"><h2>Due Date</h2></button> | <button id="difficulty" class="sort-button" type="button"><h2>Difficulty</h2></button></h3>
+          <h3 class="hidden">Sort by : <button id="due-date" class="sort-button underline" type="button">Due Date</button> | <button id="difficulty" class="sort-button" type="button">Difficulty</button></h3>
           <button id="new-task" class="add-item"><h2> <i class="fas fa-plus"></i> New Task</h2></button>
         </div>
 
@@ -99,12 +99,75 @@
 
     </div>
 
-    <div class="modal-overlay closed" id="modal-overlay"></div>
+    <div class="modal-overlay" id="modal-overlay"></div>
 
-    <div class="modal closed" id="modal">
+    <div class="modal" id="modal">
       <button class="close-button" id="close-button">Close</button>
       <div class="modal-guts">
+        <h1>Testing</h1>
+        <form id="modal-form">
+          <div class="form-row">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title">
+            <label for="due-date">Due Date:</label>
+            <input type="date" id="date" name="date">
+            
+          </div>
+          <div class="form-row">
+            <label>Difficulty</label>
+          </div>
+          <div class="form-row">
+            
+            <div class="radio-toolbar">
+              <input type="radio" id="radio1" name="radios" value="#F5D346" checked>
+              <label for="radio1">Low</label>
+              <input type="radio" id="radio2" name="radios" value="#D98121">
+              <label for="radio2">Medium</label>
+              <input type="radio" id="radio3" name="radios" value="#D3151C">
+              <label for="radio3">High</label>
+            </div>
 
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="description">Description:</label>
+              
+              <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-col">
+              <label for="tasks">Project:</label>
+              <select size="3" name="tasks" id="tasks">
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="audi">Audi</option>
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+              </select>
+            </div>
+          </div>
+            <!-- <div class="form-row space-between">
+            </div>
+            <div class="form-row ">
+              <textarea id="description" name="description"></textarea>
+              <label for="tasks">Project:</label>
+              <select size="3" name="tasks" id="tasks">
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+              </select>
+            </div> -->
+            <div class="form-row bottom">
+              <button type="button">Delete</button>
+              <button type="submit">Submit</button>
+            </div>
+        </form>
       </div>
     </div>
 

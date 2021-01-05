@@ -1,5 +1,8 @@
-import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import compareAsc from 'date-fns/compareAsc'
+// is there an advantage from specifying the complete path?
+// import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+// import compareAsc from 'date-fns/compareAsc'
+// import format from 'date-fns/format'
+import { compareDesc, format, compareAsc, differenceInCalendarDays } from 'date-fns';
 
 // Module housing functions that display information within the modal
 const renderModal = (() => {
@@ -14,11 +17,11 @@ const renderModal = (() => {
   }
   // re-use newProjectHTML and make it work as an edit form and a new project form
   const projectHTML = (projObj) => {
-
     let h1 = (projObj)? `<h1>Edit Project</h1>` : `<h1>New Project</h1>`;
     let formTagContent = (projObj)? `data-id="${projObj.id}" id="modal-form"` : `id="modal-form"`;
     let titleValue = (projObj)? `value="${projObj.name}"` : "";
     let descriptionValue = (projObj)? `${projObj.description}` : ""; 
+    let input = (projObj)? `<button type="button">Delete</button><button type="submit">Submit</button>` : `<button type="submit">Submit</button>`;
     modalContent.innerHTML = `
       ${h1}
       <form ${formTagContent}>
@@ -35,8 +38,7 @@ const renderModal = (() => {
           <textarea id="project-description" name="project-description" required>${descriptionValue}</textarea>
         </div>
         <div class="form-row bottom">
-          <button type="button">Delete</button>
-          <button type="submit">Submit</button>
+          ${input}
         </div>
       </form>
     `
@@ -47,7 +49,7 @@ const renderModal = (() => {
   const taskHTML = (taskObj) => {
 
     let title = (taskObj)? `<input type="text" id="title" name="title" value="${taskObj.title}">` : `<input type="text" id="title" name="title">`;
-    let dueDate = (taskObj)? `<input type="date" id="date" name="date" value="${taskObj.dueDate}">` : '<input type="date" id="date" name="date">';
+    let dueDate = (taskObj)? `<input type="date" id="date" name="date" value="${format(taskObj.dueDate,'yyyy-MM-dd')}">` : '<input type="date" id="date" name="date">';
     let priority = (taskObj)? `
     <div class="radio-toolbar">
       <input type="radio" id="radio1" name="radios" value="#F5D346" ${(taskObj.priority == "#F5D346")? "checked" : ""}>
@@ -96,8 +98,7 @@ const renderModal = (() => {
           ${description}
         </div>
         <div class="form-row bottom">
-          <button type="button">Delete</button>
-          <button type="submit">Submit</button>
+          ${(taskObj)? `<button id="delete-button" type="button">Delete</button><button type="submit">Submit</button>` : `<button type="submit">Submit</button>`}
         </div>
     </form>
     `;
@@ -158,29 +159,37 @@ const projectsPane = (() => {
 })();
 
 // year, month, day
-const dateStringToDateObj = (dueDate) => {
-  const date = new Date(dueDate.substring(0,4), Number(dueDate.substring(5,7)) - 1, dueDate.substring(8,10))
-  // for some reason, our date object ends up back as a string after adding it to the Todo object.
-  console.log(typeof date)
-  return date;
-}
+// const dateStringToDateObj = (dueDate) => {
+//   let date;
+//   if (dueDate.length == 10){
+//     date = new Date(dueDate.substring(0,4), Number(dueDate.substring(5,7)) - 1, dueDate.substring(8,10))
+//   }
+//   else {
+//     console.log(dueDate)
+//     date = new Date(dueDate);
+//     console.log(date)
+//   }
+  
+//   return date;
+// }
+
 
 const getDateInWords = (date) => {
   const today = new Date();
-  
   let dateString;
-  // date has passed
-  if(compareAsc(date, today) == -1){
+  const dateComparison = compareAsc(date, today);
+
+  if(dateComparison == -1){
     let dateNum = differenceInCalendarDays(today, date);
     if (dateNum == 1){
       dateString = "1 day past"
     }
     else {
-      dateString = `${dateNum} days past`
+      (dateNum == 0)? dateString = "Today" : dateString = `${dateNum} days past`;
     }
   }
   // date is upcoming
-  else if (compareAsc(date, today) == 1){
+  else if (dateComparison== 1){
     let dateNum = differenceInCalendarDays(date, today);
     if (dateNum == 1){
       dateString = "In 1 day";
@@ -201,24 +210,9 @@ const tasks = (() => {
     taskContent.innerHTML = "";
   }
 
-  const renderOrder = (taskArr) => {
-    const sortBtns = document.getElementsByClassName("sort-button");
-
-    if (sortBtns[0].classList.value == "underline sort-button"){
-      console.log("sort by due date")
-      // call taskArr.sort(duedate)
-    }
-    else {
-      // call taskArr.sort(difficulty)
-    }
-  }
-  
 
   const taskHTML = (taskObj) => {
-    console.log("taskHTML 180, dueDate = ", taskObj.dueDate)
-    // create the date object here because the date object was getting converted to a string when adding it to the todo object.
-    const date = dateStringToDateObj(taskObj.dueDate)
-    const dayDifference = getDateInWords(date);
+    // console.log("Now rendering = ", taskObj)
     const HTML = `
     <div data-id="${taskObj.id}" class="task-item">
       <div class="task accordian ${(taskObj.complete == true)? "completed" : ""}">
@@ -226,13 +220,13 @@ const tasks = (() => {
         <div style="background-color:${taskObj.priority}; "id="priority-style"></div>
         <input type="checkbox" class="todo-completed" ${taskObj.complete == true ? "checked" : ""}>
         <h2 class="title">${taskObj.title}</h2>
-        <h2 class="date">${dayDifference}</h2>
+        <h2 class="date">${getDateInWords(taskObj.dueDate)}</h2>
   
       </div>
       <div class="task-full inactive">
         <div class="description-top">
           <h3>Description:</h3>
-          <h3>${date.toDateString()}</h3>
+          <h3>${taskObj.dueDate.toDateString()}</h3>
           <i data-id="${taskObj.id}" class="fas fa-ellipsis-v task-edit"></i>
         </div>
         <p>${taskObj.description}</p>
@@ -241,19 +235,26 @@ const tasks = (() => {
     `
     return HTML;
   }
+
+  const sortTasks = (taskArr) => {
+    const completed = taskArr.filter(task => task.complete == true);
+    const inProgress = taskArr.filter(task => task.complete == false);
+    completed.sort(compareDesc)
+    inProgress.sort(compareAsc)
+    taskArr = inProgress.concat(completed);
+    return taskArr;
+  }
   
   const render = (taskArr) => {
-    renderOrder()
-    // this works, call a function which decides the sort method to be used.
-    // then sort the array based on this and proceed as normal
-    taskArr.sort((a, b) => a.complete - b.complete);
+    // arranges array elements based on currently selected sort button.
+    taskArr = sortTasks(taskArr);
+
     if(taskArr.length){
       taskArr.forEach(task => {
         taskContent.innerHTML += taskHTML(task);
       })
     }
     else console.log('no tasks yet')
-
   }
 
   const renderAll = (allProjects) => {
@@ -266,8 +267,6 @@ const tasks = (() => {
     tasks.render(tempArr)
   }
 
-
-
   return {
     clear,
     render,
@@ -275,14 +274,12 @@ const tasks = (() => {
   }
 })();
 
-
 const showHeaderInfo = (proj) => {
   const projectH1 = document.getElementById("active-title");
   const projectH2 = document.getElementById("active-description");
   
   projectH1.innerHTML = proj.name;
   projectH2.innerHTML = proj.description;
-
 }
 
 const toggleSortButtons = () => {
@@ -292,31 +289,30 @@ const toggleSortButtons = () => {
   dueDateBtn.classList.toggle("underline")
 }
 
+// // Compare module with methods to use when sorting the array
+// const order = (() => {
 
-// Compare module with methods to use when sorting the array
-const compare = (() => {
+//   // const dueDateAsc = (a, b) => {
+//   //   const result = compareAsc(a.dueDate, b.dueDate);
+//   //   return result;
+//   // }
+//   // const dueDateDesc = (a, b) => {
+//   //   const result = compareDesc(a.dueDate, b.dueDate);
+//   //   return result;
+//   // }
 
-  // place the function that decides sort order inside here? (make sure render is not called if the button clicked is the one already selected)
-  // it calls on dueDate or difficulty.  it's sort of the 'master' function.
+//   const sortTasks = (taskArr) => {
+//     const completed = taskArr.filter(task => task.complete == true);
+//     const inProgress = taskArr.filter(task => task.complete == false);
+//     completed.sort(compareDesc)
+//     inProgress.sort(compareAsc)
+//     taskArr = inProgress.concat(completed);
+//     return taskArr;
+//   }
 
-  // create two arrays one with the completed values == true and one with completed values == false
-  // now sort them by duedate or difficulty.
-  // join them with the completed ones coming first? sort order is dependent on render order. double check these
 
-  const dueDate = (a, b) => {
+// })();
 
-  }
-
-  const difficulty = () => {
-
-  }
-
-  return {
-    dueDate,
-    difficulty,
-  }
-
-})();
 
 
 
@@ -326,21 +322,7 @@ export {
   tasks,
   showHeaderInfo,
   toggleSortButtons,
+
 }
 
 
-
-
-// turn this in to a sort of 'master render' function.. maybe. means we would need to import from logic :/
-// const activeProj = projectsArray.getActiveProj(allProjects);
-// (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
-
-// get sort buttons collection
-  // prior to render, examine which one has the class
-  // sort array based on this
-  // then call render
-
-// pass in the array and changes are made by reference :)
-
-
-// need to get going with the dates

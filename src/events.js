@@ -1,11 +1,6 @@
 
-import { renderModal, projectsPane, tasks, showHeaderInfo, toggleSortButtons } from './render';
+import { renderModal, projectsPane, tasks, showHeaderInfo } from './render';
 import { projectsArray, allProjects } from './logic';
-
-
-// No rendering and no data parsing in the events.
-// call on logic to work with data strictly from events
-// pass the results of logic straight to the render function and vice versa
 
 
 /* staticEvents is a module function for event listeners that are created for one singular element.
@@ -17,8 +12,6 @@ const staticEvents = (() => {
   const newProjectBtn = document.getElementById("new-project");
   const newTaskBtn = document.getElementById("new-task");
   const editProjectBtn = document.getElementById("edit-project");
-  const dueDateBtn = document.getElementById("due-date");
-  const difficultyBtn = document.getElementById("difficulty");
 
   const modalClose = () => {
   closeButton.addEventListener("click", function() {
@@ -31,17 +24,13 @@ const staticEvents = (() => {
     const newProjectForm = document.getElementById("modal-form");
     newProjectForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      // in logic js, create function to create new object and add it to the allProjects array.  return it here?
       projectsArray.addNewProject(newProjectForm['project-title'].value, newProjectForm['project-description'].value, allProjects)
-      // clear, then render projects
+
       projectsPane.clearProjects();
       projectsPane.renderProjects(allProjects);
-      // creates event listener for projects in the project pane
+
       dynamicEvents.projectNames();
-      //save to local storage
       projectsArray.save(allProjects)
-      // hide modal
       renderModal.toggle();
     })
   }
@@ -74,8 +63,7 @@ const staticEvents = (() => {
       const activeProj = projectsArray.getActiveProj(allProjects);
       // clear the tasks then render them
       tasks.clear();
-      tasks.render(activeProj.todoList);
-
+      (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects);
       // create task event listeners
       dynamicEvents.editTaskBtns();
       dynamicEvents.expandedTodo();
@@ -135,6 +123,7 @@ const staticEvents = (() => {
       // set all projects active key to a value of false
       projectsArray.allToInactive(allProjects);
       // clear task area and render all projects
+      
       tasks.clear();
       tasks.renderAll(allProjects)
       // Create object to describe the 'all' tab use it to display the header.
@@ -183,25 +172,23 @@ const staticEvents = (() => {
     })
   }
 
-  const dueDateSort = () => {
-    dueDateBtn.addEventListener("click", () => {
-      toggleSortButtons();
+  const deleteTaskBtn = () => {
+    const deleteBtn = document.getElementById("delete-button")
+    deleteBtn.addEventListener("click", (e) => {
+      const taskID = e.target.parentElement.parentElement.dataset.id;
+      projectsArray.deleteTask(taskID, allProjects)
+      const activeProj = projectsArray.getActiveProj(allProjects);
+      // clear the tasks then render them
+      tasks.clear();
+      (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
+      // create task event listeners
+      dynamicEvents.editTaskBtns();
+      dynamicEvents.expandedTodo();
+      dynamicEvents.todoCheckBoxes();
 
-      // const activeProj = projectsArray.getActiveProj(allProjects);
-      // tasks.clear();
-      // // move this to the render function
-      // (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
-    })
-  }
-
-  const difficultySort = () => {
-    difficultyBtn.addEventListener("click", () => {
-      toggleSortButtons();
-
-      // const activeProj = projectsArray.getActiveProj(allProjects);
-      // tasks.clear();
-      // // move this to the render function
-      // (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
+      // Save the projects array to local storage
+      projectsArray.save(allProjects)
+      renderModal.toggle();
     })
   }
 
@@ -212,8 +199,7 @@ const staticEvents = (() => {
     allBtn,
     editProject,
     editTaskSubmit,
-    dueDateSort,
-    difficultySort,
+    deleteTaskBtn,
   }
 })();
 
@@ -230,6 +216,7 @@ const dynamicEvents = (() => {
       e.target.parentElement.classList.toggle("completed")
       const taskID = e.target.parentElement.parentElement.dataset.id;
       projectsArray.toggleTask(taskID, allProjects)
+
       projectsArray.save(allProjects)
     })
   })
@@ -252,36 +239,28 @@ const dynamicEvents = (() => {
     const taskEditBtns = Array.from(document.getElementsByClassName("task-edit"));
     taskEditBtns.forEach((editBtn) => {
       editBtn.addEventListener("click", () => {
-
-        // get task object using data-id below
         let taskObj = projectsArray.getTask(editBtn.getAttribute("data-id"), allProjects);
-        // need to add the conditional checkbox in the taskHTML function and make fields required
+        
         renderModal.taskHTML(taskObj)
-        // Once the modal is rendered you need to initialize the delete and submit events
+        staticEvents.deleteTaskBtn();
         staticEvents.editTaskSubmit()
-        // from there make calls to array logic to replace and or delete a project by id
-        // may need to give the buttons the data id of the current 
         renderModal.toggle();
-
       })
     })
   };
 
-  // would be better named 'projectTabs' or something of the like.  could also combine this and the allBtn function.  Just add a funciton to handle additional
-  //  tasks if the data-id == 'all'. may require too much re-working to justify the minor reduction in code.
   const projectNames = () => {
     const projectNames = Array.from(document.getElementsByClassName("project-name"));
     // console.log("projects", projectNames)
     projectNames.forEach(project => {
       project.addEventListener("click", (e) => {
-        const projID = e.target.getAttribute('data-id');
+        const projID = e.target.dataset.id;
         // set current project to active and all others to inactive
         projectsArray.setToActive(projID, allProjects)
-
+        
         const activeProj = projectsArray.getActiveProj(allProjects);
-
         showHeaderInfo(activeProj);
-          // render tasks (render all active tasks)
+        
         tasks.clear();
         tasks.render(activeProj.todoList)
         projectsPane.setBackground(projID);
@@ -289,8 +268,6 @@ const dynamicEvents = (() => {
         dynamicEvents.editTaskBtns();
         dynamicEvents.expandedTodo();
         dynamicEvents.todoCheckBoxes();
-
-          
       })
     })
   };
@@ -307,10 +284,3 @@ export {
   staticEvents,
   dynamicEvents
 }
-
-
-
-
-
-
-// bundle task dynamic events into a function which calls all three for clarity
