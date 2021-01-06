@@ -82,7 +82,7 @@ const getProjects = () => {
   }
 }
 
-const allProjects = getProjects();
+let allProjects = getProjects();
 
 // module function to house all array methods used on the projects array.
 const projectsArray = (() => {

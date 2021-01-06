@@ -1,7 +1,4 @@
-// is there an advantage from specifying the complete path?
-// import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-// import compareAsc from 'date-fns/compareAsc'
-// import format from 'date-fns/format'
+
 import { compareDesc, format, compareAsc, differenceInCalendarDays } from 'date-fns';
 
 // Module housing functions that display information within the modal

@@ -332,18 +332,48 @@ const dynamicEvents = (() => {
   }
 })();
 
+const startUp = () => {
+  window.addEventListener("DOMContentLoaded", () => {
+    if(allProjects.length == 0){
+      console.log("no projects saved")
+      // create a sample project and call startup functions
+      allProjects = [];
+      projectsArray.addNewProject(
+        "Sample Project",
+        "A demo example with some sample tasks",
+        allProjects
+      );
+      console.log(allProjects[0].id)
+      
+      projectsArray.addNewTask(
+        "Click Me!",
+        "Welcome to my task app! Create a new project in the top left. Then create some tasks for the project.",
+        "#F5D346",
+        "2021-01-06",
+        allProjects,
+        allProjects[0].id
+      );
+    }
+
+    staticEvents.modalClose();
+    staticEvents.newProject();
+    staticEvents.newTask();
+    staticEvents.editProject();
+    staticEvents.allBtn(allProjects);
+    projectsPane.renderProjects(allProjects);
+    dynamicEvents.projectNames();
+
+    tasks.renderAll(allProjects);
+
+    dynamicEvents.editTaskBtns();
+    dynamicEvents.expandedTodo();
+    dynamicEvents.todoCheckBoxes();
+  });
+};
+
 export {
   staticEvents,
-  dynamicEvents
+  dynamicEvents,
+  startUp,
 }
 
-// pretty sure this can be bundled into a supporting function to cut down on so much repeat code. only param is 'allProjects'
-
-// const activeProj = projectsArray.getActiveProj(allProjects);
-// // clear the tasks then render them
-// tasks.clear();
-// (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects);
-// // create task event listeners
-// dynamicEvents.editTaskBtns();
-// dynamicEvents.expandedTodo();
-// dynamicEvents.todoCheckBoxes();
