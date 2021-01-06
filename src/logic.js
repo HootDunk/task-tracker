@@ -91,20 +91,26 @@ const projectsArray = (() => {
     const project = new Project(name, description);
     projArr.push(project)
   }
-
-  const addNewTask = (title, description, priority, dueDate, projArr) => {
+  // add optional id at end and include conditionals inside here
+  const addNewTask = (title, description, priority, dueDate, projArr, projID) => {
     // could always create the date here.
     const task = new Todo(title, description, priority, dueDate);
-    // iterate through array, find the active project object
-    projArr.forEach((proj) => {
-      if(proj.active == true){
-        proj.addTodo(task);
-      }
-    })
+    if(projID){
+      projArr.forEach((proj) => {
+        if(proj.id == projID){
+          proj.addTodo(task);
+        }
+      })
+    }
+    else{
+      projArr.forEach((proj) => {
+        if(proj.active == true){
+          proj.addTodo(task);
+        }
+      })
+    }
   }
 
-  // POTENTIAL PROBLEM
-  // here's where the problem likely lies as far as dates go.  or at least there is a potential problem
   const editTask = (id, editObj, projArr) => {
     const activeProj = getActiveProj(projArr);
     if(activeProj){
@@ -137,8 +143,6 @@ const projectsArray = (() => {
       const taskIndex = activeProj.todoList.findIndex(todo => todo.id == id);
       activeProj.todoList[taskIndex].complete = !activeProj.todoList[taskIndex].complete;
     }
-    // No active projects (we are in the 'all' tab)
-    // search through all projects for the matching task.  
     else{
       for (let i = 0; i < projArr.length; i++){
         for( let q = 0; q < projArr[i].todoList.length; q++){

@@ -52,14 +52,25 @@ const staticEvents = (() => {
     const newTaskForm = document.getElementById("modal-form");
     newTaskForm.addEventListener("submit", (e) => {
       e.preventDefault();
+      
       const newTask = {
         title: newTaskForm["title"].value,
         dueDate: newTaskForm["date"].value,
         priority: newTaskForm.radios.value,
         description: newTaskForm["description"].value,
       }
+
+      if(newTaskForm["tasks"]){
+        const projectID = newTaskForm["tasks"].options[newTaskForm["tasks"].selectedIndex].value;
+      // Adds the task to the projects array by id
+      projectsArray.addNewTask(newTask.title, newTask.description, newTask.priority, newTask.dueDate, allProjects, projectID);
+      }
+      else{
       // Adds the task to the projects array
       projectsArray.addNewTask(newTask.title, newTask.description, newTask.priority, newTask.dueDate, allProjects);
+      }
+
+
       // get the active project
       const activeProj = projectsArray.getActiveProj(allProjects);
       // clear the tasks then render them
@@ -80,7 +91,10 @@ const staticEvents = (() => {
   const newTask = () => {
     newTaskBtn.addEventListener("click", () => {
       // createModalHTML();
-      renderModal.taskHTML()
+      const activeProj = projectsArray.getActiveProj(allProjects);
+      // if defined we're in a specific project
+      activeProj? renderModal.displayTaskForm('in-proj') : renderModal.displayTaskForm('in-all', undefined, allProjects)
+
       newTaskSubmit();
       // create submit event listener
       renderModal.toggle();
@@ -104,7 +118,7 @@ const staticEvents = (() => {
       // get the active project (if an active project exists, render those todos, otherwise render all todos))
       const activeProj = projectsArray.getActiveProj(allProjects);
       tasks.clear();
-      // move this to the render function
+      
       (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects)
       // create task event listeners
       dynamicEvents.editTaskBtns();
@@ -277,8 +291,9 @@ const dynamicEvents = (() => {
     taskEditBtns.forEach((editBtn) => {
       editBtn.addEventListener("click", () => {
         let taskObj = projectsArray.getTask(editBtn.getAttribute("data-id"), allProjects);
-        
-        renderModal.taskHTML(taskObj)
+
+        renderModal.displayTaskForm("edit-existing", taskObj)
+
         staticEvents.deleteTaskBtn();
         staticEvents.editTaskSubmit()
         renderModal.toggle();
@@ -321,3 +336,14 @@ export {
   staticEvents,
   dynamicEvents
 }
+
+// pretty sure this can be bundled into a supporting function to cut down on so much repeat code. only param is 'allProjects'
+
+// const activeProj = projectsArray.getActiveProj(allProjects);
+// // clear the tasks then render them
+// tasks.clear();
+// (activeProj)? tasks.render(activeProj.todoList) : tasks.renderAll(allProjects);
+// // create task event listeners
+// dynamicEvents.editTaskBtns();
+// dynamicEvents.expandedTodo();
+// dynamicEvents.todoCheckBoxes();

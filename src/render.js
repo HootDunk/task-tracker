@@ -8,7 +8,7 @@ import { compareDesc, format, compareAsc, differenceInCalendarDays } from 'date-
 const renderModal = (() => {
 
   const modalContent = document.querySelector(".modal-guts");
-  const modal = document.querySelector("#modal");
+  const modal = document.getElementById("modal");
   const modalOverlay = document.querySelector("#modal-overlay");
 
   const toggle = () => {
@@ -44,70 +44,118 @@ const renderModal = (() => {
     `
   }
 
-  // creates HTML for creating new tasks and editing old tasks
-  // must include identifiers to support events for editing and deleting data
-  const taskHTML = (taskObj) => {
-
-    let title = (taskObj)? `<input type="text" id="title" name="title" value="${taskObj.title}">` : `<input type="text" id="title" name="title">`;
-    let dueDate = (taskObj)? `<input type="date" id="date" name="date" value="${format(taskObj.dueDate,'yyyy-MM-dd')}">` : '<input type="date" id="date" name="date">';
-    let priority = (taskObj)? `
-    <div class="radio-toolbar">
-      <input type="radio" id="radio1" name="radios" value="#F5D346" ${(taskObj.priority == "#F5D346")? "checked" : ""}>
-      <label for="radio1">Low</label>
-      <input type="radio" id="radio2" name="radios" value="#D98121" ${(taskObj.priority == "#D98121")? "checked" : ""}>
-      <label for="radio2">Medium</label>
-      <input type="radio" id="radio3" name="radios" value="#D3151C" ${(taskObj.priority == "#D3151C")? "checked" : ""}>
-      <label for="radio3">High</label>
-    </div>
-    `
-    :
-    `
-    <div class="radio-toolbar">
-      <input type="radio" id="radio1" name="radios" value="#F5D346" checked>
-      <label for="radio1">Low</label>
-      <input type="radio" id="radio2" name="radios" value="#D98121">
-      <label for="radio2">Medium</label>
-      <input type="radio" id="radio3" name="radios" value="#D3151C">
-      <label for="radio3">High</label>
-    </div>
-    `;
-    let description = (taskObj)? 
-    `<textarea id="description" name="description">${taskObj.description}</textarea>`
-    :
-    `<textarea id="description" name="description"></textarea>`
-
+  const editTaskHTML = (taskObj) => {
     modalContent.innerHTML = `
-    <h1>${taskObj? "Edit Task" : "New Task"}</h1>
-    <form data-id="${(taskObj)? taskObj.id : ""}" id="modal-form">
+    <h1>Edit Task</h1>
+    <form data-id="${taskObj.id}" id="modal-form">
       <div class="form-row">
         <label for="title">Title:</label>
-        ${title}
+        <input type="text" id="title" name="title" value="${taskObj.title}">
         <label for="due-date">Due Date:</label>
-        ${dueDate}
+        <input type="date" id="date" name="date" value="${format(taskObj.dueDate,'yyyy-MM-dd')}">
       </div>
       <div class="form-row">
         <label>Difficulty</label>
       </div>
       <div class="form-row">
-      ${priority}
+        <div class="radio-toolbar">
+          <input type="radio" id="radio1" name="radios" value="#F5D346" ${(taskObj.priority == "#F5D346")? "checked" : ""}>
+          <label for="radio1">Low</label>
+          <input type="radio" id="radio2" name="radios" value="#D98121" ${(taskObj.priority == "#D98121")? "checked" : ""}>
+          <label for="radio2">Medium</label>
+          <input type="radio" id="radio3" name="radios" value="#D3151C" ${(taskObj.priority == "#D3151C")? "checked" : ""}>
+          <label for="radio3">High</label>
+        </div>
       </div>
         <div class="form-row">
           <label for="description">Description</label>
         </div>
         <div class="form-row">
-          ${description}
+          <textarea id="description" name="description">${taskObj.description}</textarea>
         </div>
         <div class="form-row bottom">
-          ${(taskObj)? `<button id="delete-button" type="button">Delete</button><button type="submit">Submit</button>` : `<button type="submit">Submit</button>`}
+          <button id="delete-button" type="button">Delete</button>
+          <button type="submit">Submit</button>
         </div>
     </form>
     `;
   }
 
+  const projectDropDown = (projArr) => {
+    let html = `
+    <div class="form-row">
+      <label for="tasks">Project:</label>
+      <select name="tasks" id="tasks">
+    `;
+    projArr.forEach(proj => {
+      html += `<option value="${proj.id}">${proj.name}</option>`
+    })
+    html += `</select></div>`
+    return html;
+  }
+
+
+  const newTaskHTML = (formType, projArr) => {
+    modalContent.innerHTML = `
+    <h1>New Task</h1>
+    <form id="modal-form">
+      <div class="form-row">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+        <label for="due-date">Due Date:</label>
+        <input type="date" id="date" name="date">
+      </div>
+      <div class="form-row">
+        <label>Difficulty</label>
+      </div>
+      <div class="form-row">
+        <div class="radio-toolbar">
+          <input type="radio" id="radio1" name="radios" value="#F5D346">
+          <label for="radio1">Low</label>
+          <input type="radio" id="radio2" name="radios" value="#D98121">
+          <label for="radio2">Medium</label>
+          <input type="radio" id="radio3" name="radios" value="#D3151C">
+          <label for="radio3">High</label>
+        </div>
+      </div>
+        <div class="form-row">
+          <label for="description">Description</label>
+        </div>
+        <div class="form-row">
+          <textarea id="description" name="description"></textarea>
+        </div>
+        ${(formType == 'in-all')? projectDropDown(projArr) : "" }
+        <div class="form-row bottom">
+          <button type="submit">Submit</button>
+        </div>
+    </form>
+    `;
+  }
+
+
+  // can also manage the modal from size from inside of here .
+  //
+  const displayTaskForm = (formType, taskObj, projArr) => {
+    if (formType == "in-all"){
+      modal.setAttribute("style", "height:450px");
+      newTaskHTML(formType, projArr)
+    }
+    else if (formType == "edit-existing"){
+      modal.setAttribute("style", "height:400px");
+      editTaskHTML(taskObj)
+    }
+    else if (formType == "in-proj"){
+      modal.setAttribute("style", "height:400px");
+      newTaskHTML(formType)
+    }
+  }
+
+
+
   return {
     projectHTML,
     toggle,
-    taskHTML,
+    displayTaskForm,
   }
 })();
 
@@ -231,9 +279,7 @@ const tasks = (() => {
     const completed = taskArr.filter(task => task.complete == true);
     const inProgress = taskArr.filter(task => task.complete == false);
     completed.sort(dueDateDesc)
-    console.log(completed)
     inProgress.sort(dueDateAsc)
-    console.log(inProgress)
     taskArr = inProgress.concat(completed);
     return taskArr;
   }
