@@ -17,7 +17,7 @@ Project.prototype.toggleActive = function(){
   this.active = !this.active;
 }
 
-// This deletes it from the list, what about deleting the todo object?
+
 Project.prototype.deleteTodoItem = function(id) {
   const index = this.todoList.findIndex(item => item.id == id);
   this.todoList.splice(index, 1);
